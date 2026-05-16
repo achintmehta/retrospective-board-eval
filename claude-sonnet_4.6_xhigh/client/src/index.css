@@ -1,0 +1,329 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f0f2f5;
+  color: #333;
+}
+
+/* ── Main page ── */
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+.container h1 {
+  font-size: 2rem;
+  color: #1e1b4b;
+  margin-bottom: 1.5rem;
+}
+
+.create-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.create-form input {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.create-form input:focus { border-color: #6366f1; }
+
+.board-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.board-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  transition: box-shadow .15s, transform .1s;
+}
+
+.board-list li:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  transform: translateY(-1px);
+}
+
+.board-list small { color: #9ca3af; font-size: .8rem; }
+
+/* ── Board page ── */
+.board-container {
+  min-height: 100vh;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.board-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 0.25rem 0;
+}
+
+.board-header h1 {
+  flex: 1;
+  font-size: 1.4rem;
+  color: #1e1b4b;
+}
+
+.back-link {
+  color: #6366f1;
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.back-link:hover { text-decoration: underline; }
+
+/* ── Buttons ── */
+button {
+  padding: 0.55rem 1.1rem;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: .9rem;
+  transition: background .15s;
+}
+
+button:hover { background: #4f46e5; }
+
+.export-btn { background: #16a34a; }
+.export-btn:hover { background: #15803d; }
+
+/* ── Columns ── */
+.columns-wrapper {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.column {
+  background: #e2e8f0;
+  border-radius: 12px;
+  padding: 0.75rem;
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.column-title {
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #475569;
+  margin-bottom: .75rem;
+  padding: 0 .25rem;
+}
+
+.card-list {
+  min-height: 40px;
+  padding: 2px;
+  border-radius: 8px;
+  transition: background .1s;
+}
+
+.card-list.dragging-over { background: #cbd5e1; }
+
+/* ── Card ── */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: .7rem .8rem;
+  margin-bottom: .5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  cursor: grab;
+  user-select: none;
+}
+
+.card.dragging {
+  box-shadow: 0 8px 20px rgba(0,0,0,.2);
+  opacity: .9;
+  cursor: grabbing;
+}
+
+.card p { font-size: .9rem; line-height: 1.45; margin-bottom: .35rem; }
+
+.card-author { color: #9ca3af; font-size: .72rem; display: block; margin-bottom: .35rem; }
+
+.comment-toggle {
+  background: transparent;
+  color: #6366f1;
+  padding: 0;
+  font-size: .75rem;
+  text-decoration: underline;
+}
+
+.comment-toggle:hover { background: transparent; color: #4f46e5; }
+
+/* ── Comments ── */
+.comments {
+  margin-top: .6rem;
+  border-top: 1px solid #f0f0f0;
+  padding-top: .6rem;
+}
+
+.comment {
+  padding: .35rem 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.comment:last-of-type { border-bottom: none; }
+
+.comment p { font-size: .8rem; margin-bottom: .1rem; }
+.comment small { font-size: .7rem; color: #aaa; }
+
+.comment-form {
+  display: flex;
+  gap: .4rem;
+  margin-top: .6rem;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: .3rem .6rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: .8rem;
+  outline: none;
+}
+
+.comment-form input:focus { border-color: #6366f1; }
+.comment-form button { padding: .3rem .65rem; font-size: .8rem; }
+
+/* ── Add card ── */
+.add-card-btn {
+  width: 100%;
+  background: transparent;
+  color: #64748b;
+  text-align: left;
+  padding: .45rem .5rem;
+  border-radius: 6px;
+  margin-top: .4rem;
+  font-size: .85rem;
+}
+
+.add-card-btn:hover { background: #cbd5e1; color: #333; }
+
+.add-card-form { margin-top: .5rem; }
+
+.add-card-form textarea {
+  width: 100%;
+  padding: .5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: .9rem;
+  resize: none;
+  font-family: inherit;
+  margin-bottom: .4rem;
+  outline: none;
+}
+
+.add-card-form textarea:focus { border-color: #6366f1; }
+
+.add-card-form .btn-row { display: flex; gap: .3rem; }
+
+.add-card-form button { padding: .4rem .8rem; font-size: .8rem; }
+
+.btn-cancel { background: #6b7280; }
+.btn-cancel:hover { background: #4b5563; }
+
+/* ── Add column ── */
+.add-column-placeholder {
+  flex-shrink: 0;
+  width: 250px;
+}
+
+.add-column-placeholder button {
+  width: 100%;
+  background: rgba(255,255,255,.55);
+  color: #475569;
+  border-radius: 12px;
+  padding: .75rem;
+  font-size: .9rem;
+}
+
+.add-column-placeholder button:hover { background: rgba(255,255,255,.85); }
+
+.add-column-form {
+  width: 250px;
+  background: #e2e8f0;
+  border-radius: 12px;
+  padding: .75rem;
+  flex-shrink: 0;
+}
+
+.add-column-form input {
+  width: 100%;
+  padding: .45rem .6rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: .9rem;
+  margin-bottom: .5rem;
+  outline: none;
+}
+
+.add-column-form input:focus { border-color: #6366f1; }
+
+.add-column-form .btn-row { display: flex; gap: .35rem; }
+.add-column-form button { padding: .4rem .75rem; font-size: .8rem; }
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 14px;
+  padding: 2rem;
+  width: 360px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
+
+.modal h2 { margin-bottom: 1.25rem; font-size: 1.25rem; color: #1e1b4b; }
+
+.modal form { display: flex; flex-direction: column; gap: .75rem; }
+
+.modal input {
+  padding: .7rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.modal input:focus { border-color: #6366f1; }
+.modal button { padding: .75rem; font-size: 1rem; }

@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Realtime Retro Board — Model Comparison Report</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --card2: #1e2130;
+    --border: #2e3148;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --accent: #6c8cff;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+    --teal: #2dd4bf;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  header {
+    background: linear-gradient(135deg, #1a1d27 0%, #12162a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 32px 40px;
+    text-align: center;
+  }
+  header h1 { font-size: 2.2rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+  header p { color: var(--muted); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+  header .meta { display: flex; justify-content: center; gap: 32px; margin-top: 20px; flex-wrap: wrap; }
+  header .meta-item { text-align: center; }
+  header .meta-item .val { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  header .meta-item .lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+
+  nav { position: sticky; top: 0; background: #131620ee; backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 0 32px; z-index: 100; display: flex; gap: 0; overflow-x: auto; }
+  nav a { display: block; padding: 14px 18px; color: var(--muted); text-decoration: none; font-size: 0.85rem; white-space: nowrap; border-bottom: 2px solid transparent; transition: all .2s; }
+  nav a:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+  /* Stars */
+  .stars { color: #fbbf24; letter-spacing: -1px; font-size: 0.9rem; }
+  .stars-grey { color: var(--border); }
+
+  main { max-width: 1280px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  section { margin-bottom: 64px; }
+  h2 { font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 6px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 28px 0 12px; }
+
+  /* Score cards */
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 20px; }
+  .score-card { position: relative; border: 1px solid var(--border); border-radius: 12px; padding: 18px; transition: transform .15s; cursor: default; background-size: cover; background-position: top center; background-repeat: no-repeat; overflow: hidden; }
+  .score-card::before { content: ''; position: absolute; inset: 0; background: rgba(26,29,39,0.88); border-radius: inherit; pointer-events: none; }
+  .score-card > * { position: relative; z-index: 1; }
+  .score-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .score-card:hover::before { background: rgba(26,29,39,0.80); }
+  .score-card .impl-name { font-size: 0.72rem; color: var(--muted); font-family: monospace; margin-bottom: 6px; word-break: break-all; }
+  .score-card .model-name { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+  .score-card .score-row { display: flex; align-items: center; justify-content: space-between; }
+  .score-card .score-num { font-size: 2rem; font-weight: 800; }
+  .score-card .score-denom { font-size: 0.75rem; color: var(--muted); margin-left: 2px; }
+  .score-card .badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 10px; }
+  .score-card .aesthetic-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.75rem; color: var(--muted); }
+  .score-card .aesthetic-row .stars { font-size: 0.82rem; }
+  .badge { font-size: 0.65rem; padding: 2px 6px; border-radius: 20px; font-weight: 600; }
+  .badge-green { background: #064e3b; color: var(--green); }
+  .badge-yellow { background: #78350f; color: var(--yellow); }
+  .badge-red { background: #7f1d1d; color: var(--red); }
+  .badge-blue { background: #1e3a5f; color: var(--blue); }
+  .badge-purple { background: #3b1f6e; color: var(--purple); }
+  .score-45 { color: var(--green); }
+  .score-40 { color: var(--blue); }
+  .score-35 { color: var(--yellow); }
+  .score-low { color: var(--red); }
+  .score-bar { height: 4px; border-radius: 2px; margin-top: 10px; background: var(--border); }
+  .score-bar-fill { height: 100%; border-radius: 2px; transition: width .4s; }
+
+  /* Big table */
+  .table-wrap { overflow-x: auto; margin-top: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead th { background: var(--card2); color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; font-size: 0.7rem; padding: 10px 12px; text-align: left; position: sticky; top: 48px; border-bottom: 1px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: #1e2130; }
+  tbody td { padding: 10px 12px; vertical-align: middle; }
+  .pass { color: var(--green); font-weight: 600; }
+  .fixed { color: var(--yellow); font-weight: 600; }
+  .fail { color: var(--red); font-weight: 600; }
+  .mono { font-family: monospace; font-size: 0.75rem; color: var(--muted); }
+  .score-cell { font-weight: 800; font-size: 1rem; }
+
+  /* Feature heatmap */
+  .heatmap-wrap { overflow-x: auto; margin-top: 16px; }
+  .heatmap { border-collapse: collapse; font-size: 0.72rem; }
+  .heatmap th { padding: 8px 6px; color: var(--muted); font-weight: 600; text-align: center; white-space: nowrap; }
+  .heatmap th.row-header { text-align: left; font-size: 0.68rem; font-family: monospace; color: var(--muted); min-width: 220px; }
+  .heatmap td { width: 36px; height: 32px; text-align: center; border: 1px solid var(--bg); font-size: 0.8rem; }
+  .hm-3 { background: #064e3b; color: #34d399; }
+  .hm-2 { background: #78350f; color: #fbbf24; }
+  .hm-1 { background: #7f1d1d; color: #fca5a5; }
+  .hm-0 { background: #3b0f0f; color: #ef4444; }
+
+  /* Findings */
+  .findings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-top: 16px; }
+  .finding-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .finding-card .finding-num { font-size: 0.7rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .finding-card h4 { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .finding-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+  .finding-card .tag { display: inline-block; font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; font-weight: 700; margin-bottom: 8px; }
+
+  /* Cost table */
+  .cost-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 16px; }
+  .cost-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .cost-card .name { font-size: 0.78rem; font-family: monospace; color: var(--muted); }
+  .cost-card .cost { font-size: 1.1rem; font-weight: 700; }
+  .cost-good { color: var(--green); }
+  .cost-med { color: var(--yellow); }
+  .cost-bad { color: var(--red); }
+
+  /* Recommendations */
+  .rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+  .rec-card { border-radius: 12px; padding: 20px; border: 1px solid transparent; }
+  .rec-best { background: #062a1a; border-color: #34d399; }
+  .rec-mid { background: #1a2040; border-color: #60a5fa; }
+  .rec-avoid { background: #2a0606; border-color: #f87171; }
+  .rec-card h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
+  .rec-card p { font-size: 0.82rem; color: var(--muted); }
+  .rec-best h4 { color: var(--green); }
+  .rec-mid h4 { color: var(--blue); }
+  .rec-avoid h4 { color: var(--red); }
+
+  footer { text-align: center; color: var(--muted); font-size: 0.78rem; padding: 32px; border-top: 1px solid var(--border); }
+
+  /* Lightbox modal */
+  #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; align-items: center; justify-content: center; padding: 24px; }
+  #lightbox.open { display: flex; }
+  #lightbox-inner { background: var(--card); border: 1px solid var(--border); border-radius: 16px; max-width: 1100px; width: 100%; padding: 28px; position: relative; max-height: 90vh; overflow-y: auto; }
+  #lightbox-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  #lightbox-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 18px; }
+  #lightbox-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  #lightbox-imgs figure { margin: 0; }
+  #lightbox-imgs figcaption { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em; }
+  #lightbox-imgs img { width: 100%; border-radius: 8px; border: 1px solid var(--border); display: block; }
+  #lightbox-close { position: absolute; top: 14px; right: 18px; background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; line-height: 1; }
+  #lightbox-close:hover { color: var(--text); }
+  @media (max-width: 640px) { #lightbox-imgs { grid-template-columns: 1fr; } }
+
+  /* Heatmap criteria legend */
+  .criteria-legend { margin-top: 20px; border-collapse: collapse; font-size: 0.8rem; width: 100%; max-width: 860px; }
+  .criteria-legend th { background: var(--card2); color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; font-size: 0.68rem; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  .criteria-legend td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .criteria-legend tr:hover td { background: var(--card2); }
+  .criteria-legend .col-num { font-weight: 800; color: var(--accent); width: 40px; text-align: center; }
+  .criteria-legend .col-short { font-family: monospace; color: var(--muted); font-size: 0.75rem; width: 80px; }
+  .criteria-legend .col-name { font-weight: 600; color: var(--text); width: 200px; }
+  .criteria-legend .col-desc { color: var(--muted); line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+  <div id="lightbox-inner">
+    <button id="lightbox-close" aria-label="Close">✕</button>
+    <div id="lightbox-title"></div>
+    <div id="lightbox-sub"></div>
+    <div id="lightbox-imgs">
+      <figure>
+        <figcaption>Dashboard</figcaption>
+        <img id="lb-dash" src="" alt="Dashboard screenshot" />
+      </figure>
+      <figure>
+        <figcaption>Retro Board</figcaption>
+        <img id="lb-board" src="" alt="Board screenshot" />
+      </figure>
+    </div>
+  </div>
+</div>
+
+<header>
+  <h1>🔁 Realtime Retro Board — Model Benchmark</h1>
+  <p>A spec-driven evaluation of 22 AI coding implementations across models, agents, effort modes, and testing toolchains</p>
+  <div class="meta">
+    <div class="meta-item"><div class="val">22</div><div class="lbl">Implementations</div></div>
+    <div class="meta-item"><div class="val">7</div><div class="lbl">Distinct Models</div></div>
+    <div class="meta-item"><div class="val">15</div><div class="lbl">Criteria Each</div></div>
+    <div class="meta-item"><div class="val">45</div><div class="lbl">Max Score</div></div>
+    <div class="meta-item"><div class="val">7×</div><div class="lbl">Perfect Scores</div></div>
+  </div>
+</header>
+
+<nav>
+  <a href="#overview">Overview</a>
+  <a href="#scorecards">Score Cards</a>
+  <a href="#heatmap">Feature Heatmap</a>
+  <a href="#aesthetics">Visual Aesthetics</a>
+  <a href="#costs">Costs</a>
+  <a href="#findings">Key Findings</a>
+  <a href="#recommendations">Recommendations</a>
+</nav>
+
+<main>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <h2>The Task</h2>
+  <p style="color:var(--muted); margin-top:12px; max-width:900px; font-size:0.9rem; line-height:1.8">
+    Each agent received the same OpenSpec: build a self-hosted, real-time retrospective board with a <strong>React/Vite</strong> frontend, <strong>Node.js/Express</strong> backend, <strong>Socket.io</strong> for live sync, and <strong>SQLite</strong> persistence — launchable via <code>npm run dev</code> and Dockerized in a single container.
+    Core features required: board creation &amp; listing, configurable columns, guest display-name auth, drag-and-drop card management, nested comments, real-time broadcast across all connected clients, CSV export, and documentation.
+  </p>
+
+  <h3>Scoring</h3>
+  <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px 20px; display:flex; align-items:center; gap:10px;">
+      <span style="color:var(--green); font-size:1.3rem; font-weight:800;">3</span>
+      <span style="color:var(--muted); font-size:0.82rem;"><strong style="color:var(--text)">Pass</strong> — worked without any code changes</span>
+    </div>
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px 20px; display:flex; align-items:center; gap:10px;">
+      <span style="color:var(--yellow); font-size:1.3rem; font-weight:800;">2</span>
+      <span style="color:var(--muted); font-size:0.82rem;"><strong style="color:var(--text)">Fixed</strong> — failed initially; fixed after prompting</span>
+    </div>
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px 20px; display:flex; align-items:center; gap:10px;">
+      <span style="color:var(--red); font-size:1.3rem; font-weight:800;">1 / 0</span>
+      <span style="color:var(--muted); font-size:0.82rem;"><strong style="color:var(--text)">Fail</strong> — partially / could not be fixed</span>
+    </div>
+  </div>
+</section>
+
+<!-- SCORE CARDS -->
+<section id="scorecards">
+  <h2>Score Cards — All 22 Implementations</h2>
+  <div class="score-grid">
+
+    <!-- Perfect 45s -->
+    <div class="score-card" data-impl="claude_opus_4.7_high">
+      <div class="impl-name">claude_opus_4.7_high</div>
+      <div class="model-name">Opus 4.7 · High · Claude</div>
+      <div class="score-row">
+        <div><span class="score-num score-45">45</span><span class="score-denom">/45</span></div>
+      </div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:100%;background:var(--green)"></div></div>
+      <div class="badges"><span class="badge badge-green">Perfect</span><span class="badge badge-blue">$3.15</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude_opus_4.7_with_playwright_high">
+      <div class="impl-name">claude_opus_4.7_with_playwright_high</div>
+      <div class="model-name">Opus 4.7 · High · Claude + Playwright</div>
+      <div class="score-row"><div><span class="score-num score-45">45</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:100%;background:var(--green)"></div></div>
+      <div class="badges"><span class="badge badge-green">Perfect</span><span class="badge badge-blue">$4.01</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude_opus_4.7_with_playwright_xhigh">
+      <div class="impl-name">claude_opus_4.7_with_playwright_xhigh</div>
+      <div class="model-name">Opus 4.7 · xHigh · Claude + Playwright</div>
+      <div class="score-row"><div><span class="score-num score-45">45</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:100%;background:var(--green)"></div></div>
+      <div class="badges"><span class="badge badge-green">Perfect</span><span class="badge badge-blue">$5.57</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude_opus_4.7_xhigh">
+      <div class="impl-name">claude_opus_4.7_xhigh</div>
+      <div class="model-name">Opus 4.7 · xHigh · Claude</div>
+      <div class="score-row"><div><span class="score-num score-45">45</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:100%;background:var(--green)"></div></div>
+      <div class="badges"><span class="badge badge-green">Perfect</span><span class="badge badge-blue">$3.31</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude_opus_4.7_xhigh_with_antigravity_prompt">
+      <div class="impl-name">claude_opus_4.7_xhigh_with_antigravity_prompt</div>
+      <div class="model-name">Opus 4.7 · xHigh · Antigravity Prompt</div>
+      <div class="score-row"><div><span class="score-num score-45">45</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:100%;background:var(--green)"></div></div>
+      <div class="badges"><span class="badge badge-green">Perfect</span><span class="badge badge-blue">$5.59</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★★★</span><span>Aesthetics 5/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="antigravity_claude_sonnet_4.6">
+      <div class="impl-name">antigravity_claude_sonnet_4.6</div>
+      <div class="model-name">Sonnet 4.6 · Antigravity + GPT-OSS 120B</div>
+      <div class="score-row"><div><span class="score-num score-45">45</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:100%;background:var(--green)"></div></div>
+      <div class="badges"><span class="badge badge-green">Perfect</span><span class="badge badge-purple">GPT QA</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★★★</span><span>Aesthetics 5/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude_sonnet_4.6_with_playwright_xhigh">
+      <div class="impl-name">claude_sonnet_4.6_with_playwright_xhigh</div>
+      <div class="model-name">Sonnet 4.6 · xHigh · Claude + Playwright</div>
+      <div class="score-row"><div><span class="score-num score-45">45</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:100%;background:var(--green)"></div></div>
+      <div class="badges"><span class="badge badge-green">Perfect</span><span class="badge badge-blue">$2.57</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <!-- 44 -->
+    <div class="score-card" data-impl="claude-sonnet_4.6_xhigh">
+      <div class="impl-name">claude-sonnet_4.6_xhigh</div>
+      <div class="model-name">Sonnet 4.6 · xHigh · Claude</div>
+      <div class="score-row"><div><span class="score-num score-40">44</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:97.8%;background:var(--blue)"></div></div>
+      <div class="badges"><span class="badge badge-yellow">1 fix</span><span class="badge badge-blue">$1.40</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <!-- 43 -->
+    <div class="score-card" data-impl="claude_opus_4.6_xhigh_with_antigravity_prompt">
+      <div class="impl-name">claude_opus_4.6_xhigh_with_antigravity_prompt</div>
+      <div class="model-name">Opus 4.6 · xHigh · Antigravity Prompt</div>
+      <div class="score-row"><div><span class="score-num score-40">43</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:95.6%;background:var(--blue)"></div></div>
+      <div class="badges"><span class="badge badge-yellow">1 fix</span><span class="badge badge-blue">$3.12</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★★★</span><span>Aesthetics 5/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude-sonnet_4.6_xhigh_with_antigravity_prompt">
+      <div class="impl-name">claude-sonnet_4.6_xhigh_with_antigravity_prompt</div>
+      <div class="model-name">Sonnet 4.6 · xHigh · Antigravity Prompt</div>
+      <div class="score-row"><div><span class="score-num score-40">43</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:95.6%;background:var(--blue)"></div></div>
+      <div class="badges"><span class="badge badge-yellow">1 fix</span><span class="badge badge-blue">$2.90</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★★</span><span class="stars-grey">★</span><span>Aesthetics 4/5</span></div>
+    </div>
+
+    <!-- 42 -->
+    <div class="score-card" data-impl="claude-opus-4.6_xhigh">
+      <div class="impl-name">claude-opus-4.6_xhigh</div>
+      <div class="model-name">Opus 4.6 · xHigh · Claude</div>
+      <div class="score-row"><div><span class="score-num score-40">42</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:93.3%;background:var(--blue)"></div></div>
+      <div class="badges"><span class="badge badge-yellow">2 fixes</span><span class="badge badge-blue">$5.61</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <!-- 41 -->
+    <div class="score-card" data-impl="antigravity_opus_4.6">
+      <div class="impl-name">antigravity_opus_4.6</div>
+      <div class="model-name">Opus 4.6 · Antigravity + GPT-OSS 120B</div>
+      <div class="score-row"><div><span class="score-num score-40">41</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:91.1%;background:var(--blue)"></div></div>
+      <div class="badges"><span class="badge badge-yellow">2 fixes</span><span class="badge badge-purple">GPT QA</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★★</span><span class="stars-grey">★</span><span>Aesthetics 4/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="antigravity_gemini_3.1_pro_high">
+      <div class="impl-name">antigravity_gemini_3.1_pro_high</div>
+      <div class="model-name">Gemini 3.1 Pro · High · Antigravity</div>
+      <div class="score-row"><div><span class="score-num score-40">41</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:91.1%;background:var(--blue)"></div></div>
+      <div class="badges"><span class="badge badge-yellow">2 fixes</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★★</span><span class="stars-grey">★</span><span>Aesthetics 4/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="antigravity_gemini_3.1_pro_low">
+      <div class="impl-name">antigravity_gemini_3.1_pro_low</div>
+      <div class="model-name">Gemini 3.1 Pro · Low · Antigravity</div>
+      <div class="score-row"><div><span class="score-num score-40">41</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:91.1%;background:var(--blue)"></div></div>
+      <div class="badges"><span class="badge badge-yellow">2 fixes</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★★</span><span class="stars-grey">★</span><span>Aesthetics 4/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude-opus-4.6_with_playwright_high">
+      <div class="impl-name">claude-opus-4.6_with_playwright_high</div>
+      <div class="model-name">Opus 4.6 · High · Claude + Playwright</div>
+      <div class="score-row"><div><span class="score-num score-40">41</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:91.1%;background:var(--blue)"></div></div>
+      <div class="badges"><span class="badge badge-yellow">2 fixes</span><span class="badge badge-blue">$5.36</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude_sonnet_4.6_with_playwright_high">
+      <div class="impl-name">claude_sonnet_4.6_with_playwright_high</div>
+      <div class="model-name">Sonnet 4.6 · High · Claude + Playwright</div>
+      <div class="score-row"><div><span class="score-num score-40">41</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:91.1%;background:var(--blue)"></div></div>
+      <div class="badges"><span class="badge badge-red">1 unfixed</span><span class="badge badge-blue">$4.90</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <!-- 40 -->
+    <div class="score-card" data-impl="claude-opus-4.6_with_playwright_xhigh">
+      <div class="impl-name">claude-opus-4.6_with_playwright_xhigh</div>
+      <div class="model-name">Opus 4.6 · xHigh · Claude + Playwright</div>
+      <div class="score-row"><div><span class="score-num score-35">40</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:88.9%;background:var(--yellow)"></div></div>
+      <div class="badges"><span class="badge badge-red">1 unfixed</span><span class="badge badge-blue">$2.08</span></div>
+      <div class="aesthetic-row"><span class="stars">★★</span><span class="stars-grey">★★★</span><span>Aesthetics 2/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude_sonnet_4.7_high">
+      <div class="impl-name">claude_sonnet_4.7_high</div>
+      <div class="model-name">Sonnet 4.7 · High · Claude</div>
+      <div class="score-row"><div><span class="score-num score-35">40</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:88.9%;background:var(--yellow)"></div></div>
+      <div class="badges"><span class="badge badge-yellow">3 fixes</span><span class="badge badge-blue">$1.58</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <!-- 38 -->
+    <div class="score-card" data-impl="antigravity_gemini3_flash">
+      <div class="impl-name">antigravity_gemini3_flash</div>
+      <div class="model-name">Gemini 3.1 Flash · Antigravity</div>
+      <div class="score-row"><div><span class="score-num score-35">38</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:84.4%;background:var(--yellow)"></div></div>
+      <div class="badges"><span class="badge badge-red">startup fail</span></div>
+      <div class="aesthetic-row"><span class="stars">★★★</span><span class="stars-grey">★★</span><span>Aesthetics 3/5</span></div>
+    </div>
+
+    <div class="score-card" data-impl="claude_opus_4.6_high">
+      <div class="impl-name">claude_opus_4.6_high</div>
+      <div class="model-name">Opus 4.6 · High · Claude</div>
+      <div class="score-row"><div><span class="score-num score-35">38</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:84.4%;background:var(--yellow)"></div></div>
+      <div class="badges"><span class="badge badge-red">2 unfixed</span><span class="badge badge-blue">$6.62</span></div>
+      <div class="aesthetic-row"><span class="stars">★★</span><span class="stars-grey">★★★</span><span>Aesthetics 2/5</span></div>
+    </div>
+
+    <!-- 33 -->
+    <div class="score-card" data-impl="claude_qwen_3.6_high">
+      <div class="impl-name">claude_qwen_3.6_high</div>
+      <div class="model-name">Qwen 3.6 · High · Claude</div>
+      <div class="score-row"><div><span class="score-num score-low">33</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:73.3%;background:var(--red)"></div></div>
+      <div class="badges"><span class="badge badge-red">5 fails</span><span class="badge badge-red">$41</span></div>
+      <div class="aesthetic-row"><span class="stars">★★</span><span class="stars-grey">★★★</span><span>Aesthetics 2/5</span></div>
+    </div>
+
+    <!-- 16 -->
+    <div class="score-card" data-impl="claude_qwen_coder_next_high_with_playwright">
+      <div class="impl-name">claude_qwen_coder_next_high_with_playwright</div>
+      <div class="model-name">Qwen Coder Next · High · Claude</div>
+      <div class="score-row"><div><span class="score-num score-low">16</span><span class="score-denom">/45</span></div></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:35.6%;background:var(--red)"></div></div>
+      <div class="badges"><span class="badge badge-red">8 fail/0</span><span class="badge badge-red">$179</span></div>
+      <div class="aesthetic-row"><span class="stars">★</span><span class="stars-grey">★★★★</span><span>Aesthetics 1/5</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HEATMAP -->
+<section id="heatmap">
+  <h2>Feature Heatmap — All Implementations × All Criteria</h2>
+  <p style="color:var(--muted); font-size:0.82rem; margin-top:8px;">
+    <span style="background:#064e3b; color:var(--green); padding:2px 8px; border-radius:4px; font-weight:700; margin-right:6px;">3</span> Pass first try &nbsp;
+    <span style="background:#78350f; color:var(--yellow); padding:2px 8px; border-radius:4px; font-weight:700; margin-right:6px;">2</span> Fixed after prompting &nbsp;
+    <span style="background:#7f1d1d; color:var(--red); padding:2px 8px; border-radius:4px; font-weight:700; margin-right:6px;">1</span> Partially fixed &nbsp;
+    <span style="background:#3b0f0f; color:#ef4444; padding:2px 8px; border-radius:4px; font-weight:700;">0</span> Could not fix
+  </p>
+  <div class="heatmap-wrap">
+    <table class="heatmap">
+      <thead>
+        <tr>
+          <th class="row-header">Implementation</th>
+          <th title="Local Dev">1</th>
+          <th title="Docker">2</th>
+          <th title="Home Page">3</th>
+          <th title="Board Creation">4</th>
+          <th title="User ID">5</th>
+          <th title="Card Add">6</th>
+          <th title="Card Move">7</th>
+          <th title="Comments">8</th>
+          <th title="RT Cards">9</th>
+          <th title="RT Move">10</th>
+          <th title="RT Comments">11</th>
+          <th title="Persistence">12</th>
+          <th title="Docker Persist">13</th>
+          <th title="Docs">14</th>
+          <th title="CSV Export">15</th>
+          <th style="font-weight:800;color:var(--text)">Σ</th>
+        </tr>
+        <tr style="font-size:0.6rem; color:var(--muted)">
+          <th class="row-header">Criteria →</th>
+          <th>Dev</th><th>Docker</th><th>Home</th><th>Board</th><th>Auth</th><th>Card+</th><th>Move</th><th>Cmnt</th><th>RT+</th><th>RTmv</th><th>RTcm</th><th>Pers</th><th>D.Per</th><th>Docs</th><th>CSV</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">antigravity_claude_sonnet_4.6</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--green)">45</td></tr>
+        <tr><td class="mono">antigravity_gemini3_flash</td><td class="hm-1">1</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--yellow)">38</td></tr>
+        <tr><td class="mono">antigravity_gemini_3.1_pro_high</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--blue)">41</td></tr>
+        <tr><td class="mono">antigravity_gemini_3.1_pro_low</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-2">2</td><td style="font-weight:800;color:var(--blue)">41</td></tr>
+        <tr><td class="mono">antigravity_opus_4.6</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--blue)">41</td></tr>
+        <tr><td class="mono">claude-opus-4.6_with_playwright_high</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--blue)">41</td></tr>
+        <tr><td class="mono">claude-opus-4.6_with_playwright_xhigh</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-1">1</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--yellow)">40</td></tr>
+        <tr><td class="mono">claude-opus-4.6_xhigh</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--blue)">42</td></tr>
+        <tr><td class="mono">claude-sonnet_4.6_xhigh</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--blue)">44</td></tr>
+        <tr><td class="mono">claude-sonnet_4.6_xhigh_with_antigravity_prompt</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--blue)">43</td></tr>
+        <tr><td class="mono">claude_opus_4.6_high</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-1">1</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--yellow)">38</td></tr>
+        <tr><td class="mono">claude_opus_4.6_xhigh_with_antigravity_prompt</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--blue)">43</td></tr>
+        <tr><td class="mono">claude_opus_4.7_high</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--green)">45</td></tr>
+        <tr><td class="mono">claude_opus_4.7_with_playwright_high</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--green)">45</td></tr>
+        <tr><td class="mono">claude_opus_4.7_with_playwright_xhigh</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--green)">45</td></tr>
+        <tr><td class="mono">claude_opus_4.7_xhigh</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--green)">45</td></tr>
+        <tr><td class="mono">claude_opus_4.7_xhigh_with_antigravity_prompt</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--green)">45</td></tr>
+        <tr><td class="mono">claude_qwen_3.6_high</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--red)">39</td></tr>
+        <tr><td class="mono">claude_qwen_coder_next_high_with_playwright</td><td class="hm-2">2</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-1">1</td><td class="hm-2">2</td><td class="hm-0">0</td><td class="hm-0">0</td><td class="hm-0">0</td><td class="hm-0">0</td><td class="hm-0">0</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-0">0</td><td style="font-weight:800;color:var(--red)">21</td></tr>
+        <tr><td class="mono">claude_sonnet_4.6_with_playwright_high</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-1">1</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--blue)">41</td></tr>
+        <tr><td class="mono">claude_sonnet_4.6_with_playwright_xhigh</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--green)">45</td></tr>
+        <tr><td class="mono">claude_sonnet_4.7_high</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-2">2</td><td class="hm-2">2</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td class="hm-3">3</td><td style="font-weight:800;color:var(--yellow)">40</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin-top:28px;">Criteria Legend</h3>
+  <table class="criteria-legend">
+    <thead>
+      <tr>
+        <th class="col-num">#</th>
+        <th class="col-short">Short</th>
+        <th class="col-name">Criterion</th>
+        <th class="col-desc">What was tested</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-num">1</td><td class="col-short">Dev</td><td class="col-name">Local Dev Startup</td><td class="col-desc">App starts cleanly with <code>npm run dev</code> (no manual intervention). Frontend and backend both reachable.</td></tr>
+      <tr><td class="col-num">2</td><td class="col-short">Docker</td><td class="col-name">Docker Build &amp; Run</td><td class="col-desc"><code>docker build</code> succeeds and the container runs without errors. Includes native module pitfalls (better-sqlite3 gyp) and Express 5 wildcard issues.</td></tr>
+      <tr><td class="col-num">3</td><td class="col-short">Home</td><td class="col-name">Home / Dashboard Page</td><td class="col-desc">Landing page loads, lists existing boards, and provides a way to create a new board.</td></tr>
+      <tr><td class="col-num">4</td><td class="col-short">Board</td><td class="col-name">Board Creation</td><td class="col-desc">Creating a new board generates a unique ID, configurable column names are respected, and the board persists across refreshes.</td></tr>
+      <tr><td class="col-num">5</td><td class="col-short">Auth</td><td class="col-name">Guest Authentication</td><td class="col-desc">Users can join a board with a display name (guest auth). Name is shown on cards/comments they create.</td></tr>
+      <tr><td class="col-num">6</td><td class="col-short">Card+</td><td class="col-name">Card Creation</td><td class="col-desc">Cards can be added to any column. Card content is saved and visible to all participants.</td></tr>
+      <tr><td class="col-num">7</td><td class="col-short">Move</td><td class="col-name">Card Movement</td><td class="col-desc">Cards can be dragged (or otherwise moved) between columns. The new position persists after reload.</td></tr>
+      <tr><td class="col-num">8</td><td class="col-short">Cmnt</td><td class="col-name">Nested Comments</td><td class="col-desc">Users can add threaded/nested comments on a card. Comment author and timestamp are shown.</td></tr>
+      <tr><td class="col-num">9</td><td class="col-short">RT+</td><td class="col-name">Real-time Card Add</td><td class="col-desc">A card added by one client appears on all other connected clients in real time (Socket.io broadcast).</td></tr>
+      <tr><td class="col-num">10</td><td class="col-short">RTmv</td><td class="col-name">Real-time Card Move</td><td class="col-desc">Moving a card on one client is reflected live on all other clients without a page refresh.</td></tr>
+      <tr><td class="col-num">11</td><td class="col-short">RTcm</td><td class="col-name">Real-time Comments</td><td class="col-desc">Comments posted by one client appear immediately on all other connected clients.</td></tr>
+      <tr><td class="col-num">12</td><td class="col-short">Pers</td><td class="col-name">Data Persistence</td><td class="col-desc">Boards, cards, and comments survive a server restart (SQLite or equivalent is used correctly).</td></tr>
+      <tr><td class="col-num">13</td><td class="col-short">D.Per</td><td class="col-name">Docker Persistence</td><td class="col-desc">Data persists across container restarts when using a Docker volume. Volume is mounted to <code>/data</code>, not <code>/app</code>.</td></tr>
+      <tr><td class="col-num">14</td><td class="col-short">Docs</td><td class="col-name">Documentation</td><td class="col-desc">A README or equivalent explains how to run locally and via Docker. Environment variables documented.</td></tr>
+      <tr><td class="col-num">15</td><td class="col-short">CSV</td><td class="col-name">CSV Export</td><td class="col-desc">Board data (cards + comments) can be exported as a CSV file, downloadable from the UI.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- AESTHETICS -->
+<section id="aesthetics">
+  <h2>Visual Aesthetics — Screenshot Review</h2>
+  <p style="color:var(--muted);font-size:0.82rem;margin-top:8px;margin-bottom:20px;">Each implementation rated 1–5 based on direct review of dashboard + board page screenshots: visual polish, colour coherence, layout quality, and professional feel. <strong style="color:var(--yellow)">★</strong> = star earned, <span style="color:var(--border)">★</span> = star missing.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;">
+
+    <!-- 5-star -->
+    <div style="background:var(--card);border:1px solid #4b3a00;border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">claude_opus_4.7_xhigh_with_antigravity_prompt</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Opus 4.7 · xHigh · Antigravity Prompt</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★★★★</span> <span style="font-size:0.75rem;color:var(--muted)">5/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Dark gradient hero with "Run team retrospectives that feel alive" tagline. Colour-coded columns (dot indicators), avatar chips with relative timestamps ("27 min ago"), Live badge. The most visually ambitious UI in the experiment.</p>
+    </div>
+
+    <div style="background:var(--card);border:1px solid #4b3a00;border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">claude-sonnet_4.6_xhigh_with_antigravity_prompt</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Sonnet 4.6 · xHigh · Antigravity Prompt</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★★★★</span> <span style="font-size:0.75rem;color:var(--muted)">5/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Dark gradient hero with "Run better retrospectives" marketing headline and feature chip pills (Real-time sync, Guest-friendly, CSV Export). Board view has per-column colour dots and clean card layout. Marketing-grade landing page.</p>
+    </div>
+
+    <!-- 4-star -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">antigravity_claude_sonnet_4.6</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Sonnet 4.6 · Antigravity + GPT-OSS 120B</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★★★</span><span style="color:var(--border)">★</span> <span style="font-size:0.75rem;color:var(--muted)">4/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Clean dark mode with logo in nav, purple accent buttons, column config on dashboard. Card detail view is well-structured. Professional feel throughout.</p>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">antigravity_opus_4.6</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Opus 4.6 · Antigravity + GPT-OSS 120B</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★★★</span><span style="color:var(--border)">★</span> <span style="font-size:0.75rem;color:var(--muted)">4/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Dark themed with teal/yellow/blue colour-coded column headers, avatar initial chips on comments, user chip in top-right nav. Distinctive and polished.</p>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">claude_sonnet_4.6_with_playwright_high</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Sonnet 4.6 · High · Claude + Playwright</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★★★</span><span style="color:var(--border)">★</span> <span style="font-size:0.75rem;color:var(--muted)">4/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Bold indigo/blue full-width header bar with white text branding. Comment count badges on cards. Clean card surfaces. Strong visual identity even if not unique.</p>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">claude_sonnet_4.6_with_playwright_xhigh</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Sonnet 4.6 · xHigh · Claude + Playwright</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★★★</span><span style="color:var(--border)">★</span> <span style="font-size:0.75rem;color:var(--muted)">4/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Strong indigo header with "Joined as: Alice" identity indicator. Dashed + Add Column affordance is intuitive. Clean card grid layout.</p>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">claude_sonnet_4.7_high</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Sonnet 4.7 · High · Claude</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★★★</span><span style="color:var(--border)">★</span> <span style="font-size:0.75rem;color:var(--muted)">4/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Deep indigo/purple full-width header, clean white card surfaces on a neutral background. "Joined as: Achint" contextual cue. Good vertical rhythm and spacing.</p>
+    </div>
+
+    <!-- 3-star -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">claude_opus_4.7_high · claude_opus_4.7_with_playwright_high · claude_opus_4.7_with_playwright_xhigh · claude_opus_4.7_xhigh</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Opus 4.7 (all non-Antigravity configs)</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★★</span><span style="color:var(--border)">★★</span> <span style="font-size:0.75rem;color:var(--muted)">3/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">All four default Opus 4.7 runs produced clean, readable but minimal UIs — light backgrounds, plain sans-serif typography, one blue accent button, no strong personality. Functional but interchangeable with a dozen other light-mode apps. Perfect functional scores but unambitious visual design.</p>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">claude_opus_4.6_high · claude-opus-4.6_with_playwright_high · claude-sonnet_4.6_xhigh · claude-opus-4.6_xhigh · antigravity_gemini_3.1_pro_low</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Various Claude Opus/Sonnet 4.6 defaults</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★★</span><span style="color:var(--border)">★★</span> <span style="font-size:0.75rem;color:var(--muted)">3/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Clean, usable, some with coloured header bars or accent buttons. Above average for generated code but nothing that would turn heads. The blue-header pattern (Opus 4.6 xHigh, Sonnet 4.7) adds a hint of personality. Gemini Pro Low surprised with decent card layout.</p>
+    </div>
+
+    <!-- 2-star -->
+    <div style="background:var(--card);border:1px solid #3a1a1a;border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">claude-opus-4.6_with_playwright_xhigh · antigravity_gemini_3.1_pro_high · antigravity_gemini3_flash · claude_qwen_3.6_high · claude_opus_4.6_xhigh_with_antigravity_prompt</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Unstyled / Minimal / Layout Issues</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★★</span><span style="color:var(--border)">★★★</span> <span style="font-size:0.75rem;color:var(--muted)">2/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Opus 4.6 Playwright xHigh: completely unstyled — raw browser defaults, black links. Gemini Pro High: plain white HTML, no CSS whatsoever. Gemini Flash: dark but layout crowded to top-left corner. Qwen 3.6: default Bootstrap-ish styling, no identity. Antigravity Opus 4.6 xHigh: too small/dark to evaluate properly.</p>
+    </div>
+
+    <!-- 1-star -->
+    <div style="background:var(--card);border:1px solid #3a1a1a;border-radius:12px;padding:18px;">
+      <div style="font-size:0.68rem;font-family:monospace;color:var(--muted);margin-bottom:4px;">claude_qwen_coder_next_high_with_playwright</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">Qwen Coder Next · High · Claude</div>
+      <div style="font-size:1.2rem;margin-bottom:8px;"><span style="color:#fbbf24">★</span><span style="color:var(--border)">★★★★</span> <span style="font-size:0.75rem;color:var(--muted)">1/5</span></div>
+      <p style="font-size:0.8rem;color:var(--muted);line-height:1.6">Completely unstyled. "Invalid Date" visible in the board list (date rendering bug). Jarring green "Add Column" button against a white page. No CSS beyond browser defaults. Reflects the broken implementation — the visual state mirrors the functional state.</p>
+    </div>
+
+  </div>
+
+  <h3 style="margin-top:32px;">Key Aesthetic Finding: The Antigravity Prompt is the Biggest Design Differentiator</h3>
+  <p style="font-size:0.85rem;color:var(--muted);line-height:1.8;max-width:900px;">
+    The two highest-rated visual designs (both 5/5) used the Antigravity system prompt — which appears to include strong UI/UX style guidance encouraging hero sections, marketing copy, colour-coded columns, and avatar indicators. Without it, even Opus 4.7 at xHigh effort consistently produces functional but visually plain interfaces (3/5). <strong style="color:var(--text)">Effort mode (High vs. xHigh) had almost no effect on visual quality.</strong> Model generation (4.6 → 4.7) had almost no effect on visual quality either. The prompt itself is the biggest lever for UI aesthetics in agentic code generation.
+  </p>
+</section>
+
+<!-- COSTS -->
+<section id="costs">
+  <h2>Cost Comparison (where recorded)</h2>
+  <p style="color:var(--muted);font-size:0.82rem;margin-top:6px;margin-bottom:16px;">Final session cost after all prompting and fixes. Lower is better. Score shown for context. <strong style="color:var(--purple)">*</strong> = locally-hosted model; no inference charges. Dollar figures Claude Code reported for Qwen runs reflect the Claude Opus 4.7 <em>orchestration layer</em> cost only (~$41 and ~$179 respectively), not the Qwen model itself.</p>
+  <div class="cost-grid">
+    <div class="cost-card"><div><div class="name">claude-sonnet_4.6_xhigh</div><div style="font-size:0.7rem;color:var(--muted)">Score: 44/45</div></div><div class="cost cost-good">$1.40</div></div>
+    <div class="cost-card"><div><div class="name">claude_sonnet_4.7_high</div><div style="font-size:0.7rem;color:var(--muted)">Score: 40/45</div></div><div class="cost cost-good">$1.58</div></div>
+    <div class="cost-card"><div><div class="name">claude-opus-4.6_with_playwright_xhigh</div><div style="font-size:0.7rem;color:var(--muted)">Score: 40/45</div></div><div class="cost cost-good">$2.08</div></div>
+    <div class="cost-card"><div><div class="name">claude_sonnet_4.6_with_playwright_xhigh</div><div style="font-size:0.7rem;color:var(--muted)">Score: 45/45 ⭐</div></div><div class="cost cost-good">$2.57</div></div>
+    <div class="cost-card"><div><div class="name">claude-sonnet_4.6_xhigh_with_antigravity_prompt</div><div style="font-size:0.7rem;color:var(--muted)">Score: 43/45</div></div><div class="cost cost-good">$2.90</div></div>
+    <div class="cost-card"><div><div class="name">claude_opus_4.7_high</div><div style="font-size:0.7rem;color:var(--muted)">Score: 45/45 ⭐</div></div><div class="cost cost-good">$3.15</div></div>
+    <div class="cost-card"><div><div class="name">claude_opus_4.7_xhigh</div><div style="font-size:0.7rem;color:var(--muted)">Score: 45/45 ⭐</div></div><div class="cost cost-good">$3.31</div></div>
+    <div class="cost-card"><div><div class="name">claude_opus_4.6_xhigh_with_antigravity_prompt</div><div style="font-size:0.7rem;color:var(--muted)">Score: 43/45</div></div><div class="cost cost-good">$3.12</div></div>
+    <div class="cost-card"><div><div class="name">claude_opus_4.7_with_playwright_high</div><div style="font-size:0.7rem;color:var(--muted)">Score: 45/45 ⭐</div></div><div class="cost cost-med">$4.01</div></div>
+    <div class="cost-card"><div><div class="name">claude_sonnet_4.6_with_playwright_high</div><div style="font-size:0.7rem;color:var(--muted)">Score: 41/45</div></div><div class="cost cost-med">$4.90</div></div>
+    <div class="cost-card"><div><div class="name">claude-opus-4.6_with_playwright_high</div><div style="font-size:0.7rem;color:var(--muted)">Score: 41/45</div></div><div class="cost cost-med">$5.36</div></div>
+    <div class="cost-card"><div><div class="name">claude_opus_4.7_with_playwright_xhigh</div><div style="font-size:0.7rem;color:var(--muted)">Score: 45/45 ⭐</div></div><div class="cost cost-med">$5.57</div></div>
+    <div class="cost-card"><div><div class="name">claude_opus_4.7_xhigh_with_antigravity_prompt</div><div style="font-size:0.7rem;color:var(--muted)">Score: 45/45 ⭐</div></div><div class="cost cost-med">$5.59</div></div>
+    <div class="cost-card"><div><div class="name">claude-opus-4.6_xhigh</div><div style="font-size:0.7rem;color:var(--muted)">Score: 42/45</div></div><div class="cost cost-med">$5.61</div></div>
+    <div class="cost-card"><div><div class="name">claude_opus_4.6_high</div><div style="font-size:0.7rem;color:var(--muted)">Score: 38/45</div></div><div class="cost cost-bad">$6.62</div></div>
+    <div class="cost-card"><div><div class="name">claude_qwen_3.6_high</div><div style="font-size:0.7rem;color:var(--muted)">Score: 33/45 · Local model</div></div><div class="cost" style="color:var(--purple)">$0*</div></div>
+    <div class="cost-card"><div><div class="name">claude_qwen_coder_next_high_with_playwright</div><div style="font-size:0.7rem;color:var(--muted)">Score: 16/45 · Local model</div></div><div class="cost" style="color:var(--purple)">$0*</div></div>
+  </div>
+</section>
+
+<!-- FINDINGS -->
+<section id="findings">
+  <h2>Key Findings</h2>
+  <div class="findings-grid">
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 01</div>
+      <span class="tag" style="background:#064e3b;color:var(--green)">Model Leap</span>
+      <h4>Opus 4.7 is the unambiguous winner — every config scores 45/45</h4>
+      <p>All 5 Opus 4.7 configurations (High, xHigh, with/without Playwright, with Antigravity prompt) delivered a fully working application without any manual fixes. No other model achieved this consistency. This is a clear generational step over Opus 4.6.</p>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 02</div>
+      <span class="tag" style="background:#78350f;color:var(--yellow)">Systemic Bug</span>
+      <h4>Docker is the #1 failure point — broken in 11 of 22 runs</h4>
+      <p>Two bugs recurred constantly: (1) <code>better-sqlite3</code> requires Python + build tools absent in Alpine Linux containers, causing gyp errors. (2) Express 5 (now npm default) broke <code>app.get('*')</code> wildcard routing with a PathError. Models that chose <code>sql.js</code> (pure WASM) and were aware of Express 5 shipping changes consistently avoided both.</p>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 03</div>
+      <span class="tag" style="background:#1e3a5f;color:var(--blue)">Hardest Feature</span>
+      <h4>Card drag-and-drop is the trickiest feature to get right first try</h4>
+      <p>Moving cards between columns had the highest failure rate of any functional feature. Bugs ranged from blank dashboards after a move, to ghost duplicate cards, to silent no-ops. This feature requires coordinated WebSocket broadcasts, DB updates, and React state — any layer out of sync causes visible failures.</p>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 04</div>
+      <span class="tag" style="background:#3b1f6e;color:var(--purple)">Agent Design</span>
+      <h4>Antigravity's browser sub-agent elevates Sonnet but can't compensate for weaker models</h4>
+      <p>The Antigravity agent (which spawns a GPT-OSS 120B browser sub-agent for visual QA) pushed Sonnet 4.6 to a perfect 45/45 — a result only matched by Sonnet 4.6 with Playwright at xHigh effort. However, Antigravity Opus 4.6 still scored 41/45, suggesting visual verification helps catch bugs but can't substitute for model capability in generating correct code initially.</p>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 05</div>
+      <span class="tag" style="background:#1e3a5f;color:var(--blue)">Tooling</span>
+      <h4>Playwright UI testing correlates with — but doesn't guarantee — better scores</h4>
+      <p>Playwright-enabled runs at xHigh effort were consistently excellent (Sonnet 4.6: 45/45, Opus 4.7: 45/45). But at High effort, Playwright sometimes caught bugs in environments it couldn't fully replicate (e.g., a Docker-specific SQLite datatype mismatch for Sonnet 4.6 High, which remained unfixed).</p>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 06</div>
+      <span class="tag" style="background:#78350f;color:var(--yellow)">Effort Mode</span>
+      <h4>xHigh effort helps weaker models more than stronger ones</h4>
+      <p>For Opus 4.7, both High and xHigh were perfect — the extra budget added no value. For Opus 4.6, xHigh (42) clearly outperformed High (38). For Sonnet 4.6, xHigh (44–45) bested High (40–41). The stronger the baseline model, the less incremental improvement higher effort provides.</p>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 07</div>
+      <span class="tag" style="background:#7f1d1d;color:var(--red)">Non-Claude Models</span>
+      <h4>Non-Claude models underperform significantly — especially at cost</h4>
+      <p>Gemini 3.1 Pro scored a reasonable 41/45 but still needed Docker fixes. Gemini Flash (38/45) failed to start at all initially. Qwen 3.6 scored 33/45 at a cost of $41. Qwen Coder Next scored 16/45 while spending $178 — the worst result and highest cost in the entire experiment by a wide margin.</p>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 08</div>
+      <span class="tag" style="background:#064e3b;color:var(--green)">Best Value</span>
+      <h4>Cost vs. quality is profoundly non-linear — and Qwen's "cost" is misread</h4>
+      <p>Opus 4.7 High at $3.15 delivered a perfect 45/45. Sonnet 4.6 xHigh+Playwright at $2.57 also achieved a perfect 45/45. <strong>Both Qwen runs used locally-hosted models at zero inference cost.</strong> The $41 and $179 figures Claude Code reported were the cost of the Claude Opus 4.7 orchestration layer driving the agentic loop — not Qwen inference. This makes the Qwen results more striking: even with free inference, the Claude orchestration overhead alone exceeded the cost of the best API-based runs, while delivering far worse results.</p>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 09</div>
+      <span class="tag" style="background:#1e3a5f;color:var(--blue)">Library Choice</span>
+      <h4><code>sql.js</code> (WASM) was the right SQLite choice; <code>better-sqlite3</code> consistently broke Docker</h4>
+      <p>The <code>better-sqlite3</code> native module requires a Python toolchain and GLIBC version that's often absent in Alpine or minimal Debian containers. Models that proactively chose <code>sql.js</code> — a pure JavaScript/WASM port of SQLite — shipped working Docker containers on the first attempt every time. This is a strong architectural signal for future benchmarks.</p>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-num">Finding 10</div>
+      <span class="tag" style="background:#3b1f6e;color:var(--purple)">System Prompt</span>
+      <h4>The Antigravity system prompt helps code quality but not scores for Opus 4.7</h4>
+      <p>Adding the Antigravity system prompt to Claude runs produced more code (Opus 4.7: 3,676 lines vs. ~2,200 baseline), higher code quality, and better documentation — but didn't improve the already-perfect 45/45 scores. It did help Opus 4.6, where the xHigh+Antigravity run (43) edged ahead of the base xHigh run (42).</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- RECOMMENDATIONS -->
+<section id="recommendations">
+  <h2>Recommendations</h2>
+  <div class="rec-grid">
+    <div class="rec-card rec-best">
+      <h4>🏆 Best First-Shot Reliability</h4>
+      <p><strong>Claude Opus 4.7</strong> at any effort level. Perfect 45/45 across all 5 tested configurations. Zero manual fixes required. Best choice when correctness on the first attempt is paramount.</p>
+    </div>
+    <div class="rec-card rec-best">
+      <h4>💰 Best Value (Cost + Quality)</h4>
+      <p><strong>Claude Sonnet 4.6 + Playwright at xHigh</strong> — perfect 45/45 at just $2.57. Alternatively, Opus 4.7 High at $3.15 for a zero-setup perfect run without Playwright.</p>
+    </div>
+    <div class="rec-card rec-mid">
+      <h4>🔁 For Iterative Workflows</h4>
+      <p><strong>Claude Sonnet 4.6 at xHigh</strong> (44/45, $1.40 after fixes) offers the lowest cost to near-perfect results. One fix needed for a native compile issue — easily prompted away.</p>
+    </div>
+    <div class="rec-card rec-mid">
+      <h4>🤖 For Agent Pipelines</h4>
+      <p>The <strong>Antigravity agent</strong> with Sonnet 4.6 delivers perfect results by combining coding + visual browser verification. An interesting architecture that any multi-agent pipeline could replicate.</p>
+    </div>
+    <div class="rec-card rec-avoid">
+      <h4>⚠️ Watch For: Express 5 + better-sqlite3</h4>
+      <p>Both are now npm defaults that break Docker in agentic Node.js codegen. Prefer <code>sql.js</code> over <code>better-sqlite3</code>, and ensure agents are aware of Express 5's wildcard routing changes.</p>
+    </div>
+    <div class="rec-card rec-avoid">
+      <h4>❌ Avoid: Qwen Coder Next for Full-Stack Tasks</h4>
+      <p>Scored 16/45 — worst result in the experiment. While Qwen ran locally at no inference cost, the Claude Opus 4.7 orchestration overhead still reached $179, and core features (card moving, comments, real-time updates, CSV export) were permanently broken after 9+ hours of wall-clock time. The local model simply couldn't follow complex multi-file agentic instructions reliably.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Realtime Retrospective Board — AI Model Benchmark &nbsp;·&nbsp; 22 implementations &nbsp;·&nbsp; May 2026</p>
+</footer>
+
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbTitle = document.getElementById('lightbox-title');
+  var lbSub = document.getElementById('lightbox-sub');
+  var lbDash = document.getElementById('lb-dash');
+  var lbBoard = document.getElementById('lb-board');
+  var lbClose = document.getElementById('lightbox-close');
+
+  document.querySelectorAll('.score-card[data-impl]').forEach(function (card) {
+    card.addEventListener('click', function () {
+      var impl = card.dataset.impl;
+      var model = card.querySelector('.model-name').textContent;
+      lbTitle.textContent = model;
+      lbSub.textContent = impl;
+      lbDash.src = impl + '/images/MainDashboard.png';
+      lbDash.alt = impl + ' dashboard screenshot';
+      lbBoard.src = impl + '/images/RetroBoard.png';
+      lbBoard.alt = impl + ' board screenshot';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    lbDash.src = '';
+    lbBoard.src = '';
+  }
+
+  lbClose.addEventListener('click', closeLightbox);
+
+  lb.addEventListener('click', function (e) {
+    if (e.target === lb) closeLightbox();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+})();
+</script>
+
+</body>
+</html>

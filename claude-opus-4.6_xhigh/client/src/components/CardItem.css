@@ -1,0 +1,81 @@
+.card-item {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+  cursor: pointer;
+}
+
+.card-content p {
+  font-size: 14px;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.card-author {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.comments-toggle {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 12px;
+  padding: 4px 0;
+  margin-top: 4px;
+}
+
+.comments-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.comment {
+  font-size: 13px;
+  margin-bottom: 6px;
+  display: flex;
+  gap: 6px;
+}
+
+.comment-author {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.comment-text {
+  word-break: break-word;
+}
+
+.comment-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+}
+
+.comment-form input:focus {
+  border-color: var(--primary);
+}
+
+.comment-form button {
+  padding: 6px 10px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+}

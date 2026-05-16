@@ -1,0 +1,60 @@
+.add-card-trigger {
+  width: 100%;
+  padding: 8px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-align: left;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.add-card-trigger:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text);
+}
+
+.add-card-form {
+  margin-top: 8px;
+}
+
+.add-card-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  resize: none;
+  outline: none;
+  font-size: 14px;
+}
+
+.add-card-form textarea:focus {
+  border-color: var(--primary);
+}
+
+.add-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.add-btn {
+  padding: 6px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.add-btn:hover {
+  background: var(--primary-hover);
+}
+
+.cancel-btn {
+  padding: 6px 12px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+}

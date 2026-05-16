@@ -1,0 +1,5 @@
+node_modules/
+dist/
+db/retro.db
+db/retro.db-wal
+db/retro.db-shm

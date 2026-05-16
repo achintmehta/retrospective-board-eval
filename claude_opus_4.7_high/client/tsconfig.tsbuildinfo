@@ -1,0 +1,1 @@
+{"root":["./src/api.ts","./src/main.tsx","./src/socket.ts","./src/types.ts","./src/components/carditem.tsx","./src/components/column.tsx","./src/components/guestnamemodal.tsx","./src/pages/boardpage.tsx","./src/pages/mainpage.tsx"],"version":"5.9.3"}

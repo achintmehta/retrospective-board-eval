@@ -1,0 +1,81 @@
+/* Design tokens — color, typography, spacing, motion */
+:root {
+  /* Color — base */
+  --bg-0: hsl(232 32% 6%);
+  --bg-1: hsl(232 28% 9%);
+  --bg-2: hsl(232 24% 12%);
+
+  --surface-0: hsla(230 28% 14% / 0.62);
+  --surface-1: hsla(230 28% 18% / 0.78);
+  --surface-2: hsla(230 28% 22% / 0.82);
+
+  --border-soft: hsla(230 30% 65% / 0.10);
+  --border-strong: hsla(230 35% 75% / 0.18);
+  --border-focus: hsla(265 95% 70% / 0.55);
+
+  --text-1: hsl(230 22% 96%);
+  --text-2: hsl(230 15% 80%);
+  --text-3: hsl(230 12% 62%);
+  --text-4: hsl(230 10% 48%);
+
+  /* Color — accents */
+  --accent-violet: hsl(265 95% 70%);
+  --accent-cyan: hsl(190 95% 62%);
+  --accent-pink: hsl(330 90% 70%);
+  --accent-amber: hsl(38 95% 64%);
+  --accent-mint: hsl(165 75% 58%);
+  --accent-rose: hsl(348 92% 67%);
+
+  --grad-primary: linear-gradient(135deg, hsl(265 95% 70%) 0%, hsl(220 95% 65%) 50%, hsl(190 95% 62%) 100%);
+  --grad-warm: linear-gradient(135deg, hsl(348 92% 67%) 0%, hsl(38 95% 64%) 100%);
+  --grad-mint: linear-gradient(135deg, hsl(165 75% 58%) 0%, hsl(190 95% 62%) 100%);
+
+  /* Column accent palette (used by index in view) */
+  --col-0: hsl(165 75% 58%);   /* mint — went well */
+  --col-1: hsl(38 95% 64%);    /* amber — needs improvement */
+  --col-2: hsl(265 95% 70%);   /* violet — action items */
+  --col-3: hsl(190 95% 62%);   /* cyan */
+  --col-4: hsl(330 90% 70%);   /* pink */
+  --col-5: hsl(348 92% 67%);   /* rose */
+
+  /* Status */
+  --positive: hsl(150 70% 55%);
+  --danger: hsl(355 85% 65%);
+
+  /* Typography */
+  --font-sans: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+
+  /* Radius */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* Spacing (4px base) */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 6px hsla(232 50% 4% / 0.35);
+  --shadow-md: 0 8px 24px hsla(232 50% 4% / 0.45);
+  --shadow-lg: 0 24px 60px hsla(232 50% 4% / 0.55);
+  --shadow-glow: 0 0 0 1px hsla(265 95% 70% / 0.4), 0 12px 40px hsla(265 95% 60% / 0.35);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --d-fast: 140ms;
+  --d-med: 240ms;
+  --d-slow: 420ms;
+}

@@ -1,0 +1,38 @@
+● Here's the key finding: both implementations were built from the same specs by the same model, but
+  the code is significantly different in architecture, quality, and robustness. The root cause isn't
+  Playwright itself — it's how having Playwright available changed the model's development process.
+
+  Why the two apps differ
+
+  When Playwright is configured, the model (me, in this case) can verify the UI in a browser during
+  implementation. This creates a subtle but important behavioral shift:
+
+  1. Less upfront investment in code quality — since the model can "see" the result, it tends to take
+  shortcuts (inline styles, monolithic components, minimal error handling) and rely on visual
+  verification to confirm things work. The approach becomes: "write something quick, check it in the
+  browser, move on."
+  2. Simpler architecture — the Playwright version has just 2 page files with everything inlined,
+  while the non-Playwright version has 4 dedicated components, 9 CSS files, CSS custom properties, and
+   proper separation of concerns. Without a browser to lean on, the model invested more in writing
+  cause isn't Playwright itself — it's how having Playwright available changed the model's development process.
+
+  Why the two apps differ
+
+  When Playwright is configured, the model (me, in this case) can verify the UI in a browser during implementation. This creates a subtle but important behavioral shift:
+
+  1. Less upfront investment in code quality — since the model can "see" the result, it tends to take shortcuts (inline styles, monolithic components, minimal error handling) and rely on
+  visual verification to confirm things work. The approach becomes: "write something quick, check it in the browser, move on."
+  2. Simpler architecture — the Playwright version has just 2 page files with everything inlined, while the non-Playwright version has 4 dedicated components, 9 CSS files, CSS custom
+  properties, and proper separation of concerns. Without a browser to lean on, the model invested more in writing robust, well-structured code upfront.
+  3. Weaker error handling — the Playwright version skips error boundaries, try-catch blocks, and response validation. The non-Playwright version has proper error states, try-catch in
+  endpoints, and response.ok checks. When you can't test visually, you write more defensively.
+
+  Why drag-and-drop breaks
+
+  The specific blank-page crash is likely caused by the Playwright version's simpler state update logic in the card_moved handler — it doesn't sort by position or handle edge cases that
+  the non-Playwright version does. An unhandled error during the drag state update crashes React with no error boundary to catch it.
+
+  TL;DR
+
+  Having Playwright available made the model prioritize speed-of-verification over code quality. The non-Playwright version compensated for lack of visual testing by writing more careful,
+  componentized, defensively-coded software — which ironically produced a better result.
