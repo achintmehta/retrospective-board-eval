@@ -11,7 +11,7 @@ Use this rubric to evaluate the quality and completeness of the retrospective bo
 
 | ID | Criteria | Status (Pass/Fail) | Rating (1-3) | Notes / Observations |
 |:---|:---|:---|:---|
-| **1** | **Local Dev Environment**: Does the local development environment come up without manual code changes? | Fail | 1| |
+| **1** | **Local Dev Environment**: Does the local development environment come up without manual code changes? | Fail | 2| |
 | **2** | **Docker Deployment**: Does the Docker image build and run without errors? | Pass | 3 | |
 | **3** | **Home Page**: Does the landing page load correctly and show the board dashboard? | Fail | 2 | |
 | **4** | **Board Creation**: Can you create a new board with a custom title? | Fail | 2 | |
@@ -24,14 +24,13 @@ Use this rubric to evaluate the quality and completeness of the retrospective bo
 | **11** | **Realtime Updates**: Does a new comment added to a card reflect in other browser windows instantly without refresh? | Pass | 3 | |
 | **12** | **Data Persistence**: Does data survive a server reboot? | Pass | 3 | |
 | **13** | **Data Persistence**: Does data survive a container restart? | Pass | 3 | |
-| **14** | **Documentation**: Is there documentation for the API and running the app? | Pass | 2 | Wrong docker startup command in the documentation, the docker volume was mounted incorrectly to `/app/server` instead of `/app/server/data` |
+| **14** | **Documentation**: Is there documentation for the API and running the app? | Fail | 2 | Wrong docker startup command in the documentation, the docker volume was mounted incorrectly to `/app/server` instead of `/app/server/data` |
 | **15** | **Export**: Does the app export data to CSV? | Pass | 3 |  |
 
 ---
 
 ## Final Summary
-**Total Score:**
-
+**Total Score:** 41/45
 ## Additional Notes
 1. Upon first run the application wouldn't start. 
 [0]                     throw new PathError(`Missing parameter name at index ${index}`, str);

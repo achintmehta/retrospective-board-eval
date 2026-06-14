@@ -31,8 +31,7 @@ Use this rubric to evaluate the quality and completeness of the retrospective bo
 ---
 
 ## Final Summary
-**Total Score:**
-
+**Total Score:** 44/45
 ## Additional Notes
 Claude Version:          2.1.132
 1. Inital usage after first shot implementation

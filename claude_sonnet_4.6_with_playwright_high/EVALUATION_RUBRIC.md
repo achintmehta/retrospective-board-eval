@@ -31,8 +31,7 @@ Use this rubric to evaluate the quality and completeness of the retrospective bo
 ---
 
 ## Final Summary
-**Total Score:**
-
+**Total Score:** 42/45
 ## Additional Notes
 1. Initial usage
   Session

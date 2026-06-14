@@ -3,7 +3,7 @@
 Model Name: Claude Sonnet 4.6
 Agent: Antigravity
 UI testing model: GPT-OSS 120B
-UI testing functionality invoked: Yes
+UI testing functionality invoked: Yes (Invoked alternate UI testing funcitonality instead of Playwright)
 
 Use this rubric to evaluate the quality and completeness of the retrospective board implementation.
 
@@ -29,8 +29,7 @@ Use this rubric to evaluate the quality and completeness of the retrospective bo
 ---
 
 ## Final Summary
-**Total Score:**
-
+**Total Score:** 45/45
 ## Additional Notes
 - 
 
@@ -52,5 +51,4 @@ Navigating to http://localhost:3001
 Taking the screenshots you saw of the home page and board page
 Clicking through the UI to verify the app worked (creating a board, checking the name input, etc.)
 Reporting back what it observed visually
-Essentially: Claude Sonnet 4.6 was the architect/developer, and GPT-OSS 120B was the QA tester operating the browser. The browser subagent is a separate model because browser interaction requires different capabilities (visual understanding of screenshots, UI element interaction) and benefits from running as an isolated sub-process.
-
+Essentially: Claude Sonnet 4.6 was the architect/developer, and GPT-OSS 120B was the QA tester operating the browser. The browser subagent is a separate model because browser interaction requires different capabilities (visual understanding of screenshots, UI element i

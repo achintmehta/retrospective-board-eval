@@ -30,8 +30,7 @@ Use this rubric to evaluate the quality and completeness of the retrospective bo
 ---
 
 ## Final Summary
-**Total Score:**
-
+**Total Score:** 43/45
 ## Additional Notes
 1. Docker image encountered the following error:  The sqlite3 library was downloading a pre-built binary for Linux x64 compiled against a newer version of the GNU C Library (GLIBC 2.38). However, the node:20-bookworm-slim base image uses Debian 12 (Bookworm), which ships with GLIBC 2.36. This mismatch caused the container to crash at runtime when the Node process tried to require sqlite3.
 2. After the above error was resolved the docker image failed to come up because of the following error:  You are using Express 5.0 (which was recently made the default version on npm). Express 5 upgraded its internal routing library (path-to-regexp to v8+), which completely removed support for using * as an unnamed wildcard route string. Because we used app.get('*') to serve the React frontend for unknown routes, it was throwing a PathError.
