@@ -183,7 +183,7 @@ Each implementation was rated 1–5 based on direct review of dashboard and boar
 | `claude-sonnet_4.6_xhigh` | 3/5 | Light, clean columns, green Export CSV accent button |
 | `claude-opus-4.6_xhigh` | 3/5 | Blue header bar, basic functional layout |
 | `antigravity_gemini_3.1_pro_low` | 3/5 | Clean white with purple accents, decent card layout, functional |
-| `claude_opus_4.6_xhigh_with_antigravity_prompt` | 2/5 | Dark but screenshot is very low resolution; text hard to read; layout cramped |
+| `claude_opus_4.6_xhigh_with_antigravity_prompt` | 5/5 | Dark indigo and violet color scheme with a prominent hero section |
 | `claude-opus-4.6_with_playwright_xhigh` | 2/5 | Completely unstyled — raw browser defaults, plain black hyperlinks, no CSS |
 | `antigravity_gemini_3.1_pro_high` | 2/5 | Plain white, zero visual design, indistinguishable from raw HTML output |
 | `antigravity_gemini3_flash` | 2/5 | Dark background but layout crowded to top-left corner; board view sparse |

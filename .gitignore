@@ -50,3 +50,18 @@ Thumbs.db
 .env.local
 .env.*.local
 *.log
+
+# --- Local-only artifacts (kept on disk, never pushed) ---
+# Third-party (Google DeepMind / Antigravity) system prompt - kept local, not redistributed
+antigravity_system_prompt.md
+claude-sonnet_4.6_xhigh_with_antigravity_prompt/CLAUDE.md
+claude_opus_4.6_xhigh_with_antigravity_prompt/CLAUDE.md
+claude_opus_4.7_xhigh_with_antigravity_prompt/CLAUDE.md
+# Large screen recordings - kept local, not pushed
+*.mp4
+# SQLite runtime sidecar files (main *.sqlite/*.db already ignored)
+*.sqlite-wal
+*.sqlite-shm
+*.db-wal
+*.db-shm
+*-journal

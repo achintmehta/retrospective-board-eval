@@ -13,7 +13,7 @@ Use this rubric to evaluate the quality and completeness of the retrospective bo
 | ID | Criteria | Status (Pass/Fail) | Rating (1-3) | Notes / Observations |
 |:---|:---|:---|:---|:---|
 | **1** | **Local Dev Environment**: Does the local development environment come up without manual code changes? |Pass | 3 | |
-| **2** | **Docker Deployment**: Does the Docker image build and run without errors? | Fail |2| Worked avter making changes|
+| **2** | **Docker Deployment**: Does the Docker image build and run without errors? | Fail |2| Worked after making changes|
 | **3** | **Home Page**: Does the landing page load correctly and show the board dashboard? | Pass| 3 | |
 | **4** | **Board Creation**: Can you create a new board with a custom title? | Pass | 3| |
 | **5** | **User Identification**: Can users identify themselves for the board? | Pass |3| |
