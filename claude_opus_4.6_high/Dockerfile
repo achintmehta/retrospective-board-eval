@@ -1,29 +1,23 @@
 FROM node:20-alpine
 
-RUN apk add --no-cache python3 make g++
-
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-COPY client/package*.json ./client/
+COPY client/package.json client/package-lock.json ./client/
 RUN cd client && npm ci
+
 COPY client/ ./client/
-RUN cd client && npm run build && rm -rf node_modules
+RUN cd client && npm run build
 
 COPY server/ ./server/
 
-RUN apk del python3 make g++
+RUN mkdir -p /data
 
 EXPOSE 3001
 
-RUN mkdir -p /data
-
 ENV NODE_ENV=production
-ENV PORT=3001
-ENV DB_PATH=/data/retro.sqlite
-
-VOLUME /data
+ENV DATA_DIR=/data
 
 CMD ["node", "server/index.js"]

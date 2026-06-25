@@ -1,0 +1,342 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main Page */
+.main-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+.main-page h1 {
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: #1a1a2e;
+}
+
+.create-board-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.create-board-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.create-board-form button {
+  padding: 10px 20px;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.create-board-form button:hover {
+  background: #535bf2;
+}
+
+.board-list {
+  list-style: none;
+}
+
+.board-list li {
+  margin-bottom: 8px;
+}
+
+.board-list a {
+  display: block;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+}
+
+.board-list a:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.board-list .board-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #1a1a2e;
+}
+
+.board-list .board-date {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Board Page */
+.board-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: #1a1a2e;
+  color: white;
+}
+
+.board-header h1 {
+  font-size: 1.3rem;
+  color: white;
+}
+
+.board-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.board-header a,
+.board-header button {
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.board-header a:hover,
+.board-header button:hover {
+  background: rgba(255,255,255,0.25);
+  color: white;
+}
+
+.board-columns {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  flex: 1;
+  overflow-x: auto;
+  align-items: flex-start;
+}
+
+.column {
+  background: #e8e8ef;
+  border-radius: 8px;
+  min-width: 280px;
+  max-width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.column-header {
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  border-bottom: 1px solid #d0d0dd;
+}
+
+.column-cards {
+  padding: 8px;
+  min-height: 60px;
+  flex: 1;
+}
+
+.card {
+  background: white;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  cursor: grab;
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.card-content {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.card-meta {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.card-comments-toggle {
+  font-size: 0.8rem;
+  color: #646cff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  margin-top: 4px;
+}
+
+.card-comments {
+  margin-top: 8px;
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+}
+
+.comment {
+  font-size: 0.85rem;
+  padding: 4px 0;
+  color: #555;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #333;
+}
+
+.comment-form {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.comment-form button {
+  padding: 4px 10px;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.add-card-form {
+  padding: 8px;
+}
+
+.add-card-form textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
+.add-card-form button {
+  margin-top: 6px;
+  padding: 6px 14px;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.add-column-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 280px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.add-column-form input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.add-column-form button {
+  padding: 8px 14px;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Guest Auth Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal h2 {
+  margin-bottom: 8px;
+  color: #1a1a2e;
+}
+
+.modal p {
+  margin-bottom: 16px;
+  color: #666;
+}
+
+.modal input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.modal button {
+  padding: 10px 24px;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.column-dragging-over {
+  background: #d8d8e8;
+}

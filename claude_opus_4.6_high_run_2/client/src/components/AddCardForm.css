@@ -1,0 +1,67 @@
+.add-card-btn {
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.add-card-btn:hover {
+  background: rgba(99, 102, 241, 0.05);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.add-card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-card-form textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  resize: vertical;
+  outline: none;
+  font-size: 0.875rem;
+}
+
+.add-card-form textarea:focus {
+  border-color: var(--primary);
+}
+
+.add-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-add {
+  padding: 6px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.btn-add:hover {
+  background: var(--primary-hover);
+}
+
+.btn-cancel {
+  padding: 6px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.btn-cancel:hover {
+  background: var(--bg);
+}

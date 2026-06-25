@@ -1,0 +1,406 @@
+* {
+  box-sizing: border-box;
+}
+
+.app-header {
+  background: #2c3e50;
+  color: white;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+}
+
+.app-header a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+}
+
+.app-header a:hover {
+  color: white;
+}
+
+.main-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.main-page h2 {
+  font-size: 28px;
+  margin-bottom: 24px;
+  color: #2c3e50;
+}
+
+.create-board-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.create-board-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.create-board-form input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.create-board-form button {
+  padding: 10px 20px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.create-board-form button:hover {
+  background: #2980b9;
+}
+
+.boards-list {
+  list-style: none;
+  padding: 0;
+}
+
+.boards-list li {
+  margin-bottom: 8px;
+}
+
+.boards-list a {
+  display: block;
+  padding: 16px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  color: #2c3e50;
+  text-decoration: none;
+  font-size: 18px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.boards-list a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+}
+
+.boards-list .board-date {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin-top: 4px;
+}
+
+.board-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px);
+}
+
+.board-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  flex-wrap: wrap;
+}
+
+.board-toolbar h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #2c3e50;
+}
+
+.board-toolbar button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.board-toolbar button:hover {
+  background: #e9ecef;
+}
+
+.board-toolbar .export-btn {
+  margin-left: auto;
+  background: #27ae60;
+  color: white;
+  border: none;
+}
+
+.board-toolbar .export-btn:hover {
+  background: #219a52;
+}
+
+.add-column-form {
+  display: flex;
+  gap: 8px;
+}
+
+.add-column-form input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.add-column-form button {
+  padding: 8px 14px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.columns-container {
+  display: flex;
+  gap: 16px;
+  padding: 16px 24px;
+  flex: 1;
+  overflow-x: auto;
+  align-items: flex-start;
+}
+
+.column {
+  background: #f1f3f5;
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 350px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
+.column-header {
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #2c3e50;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.column-cards {
+  padding: 8px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 60px;
+}
+
+.card {
+  background: white;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.card-content {
+  font-size: 14px;
+  color: #2c3e50;
+  margin-bottom: 6px;
+}
+
+.card-meta {
+  font-size: 12px;
+  color: #95a5a6;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.card-actions button {
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f9fa;
+  cursor: pointer;
+  color: #7f8c8d;
+}
+
+.card-actions button:hover {
+  background: #e9ecef;
+  color: #2c3e50;
+}
+
+.comments-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.comment {
+  font-size: 13px;
+  color: #555;
+  padding: 4px 0;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.add-comment-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.add-comment-form input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.add-comment-form button {
+  padding: 4px 10px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  background: #3498db;
+  color: white;
+  cursor: pointer;
+}
+
+.add-card-form {
+  padding: 8px;
+  border-top: 1px solid #dee2e6;
+}
+
+.add-card-form textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
+.add-card-form button {
+  margin-top: 6px;
+  padding: 6px 14px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+}
+
+.add-card-form button:hover {
+  background: #2980b9;
+}
+
+.guest-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.guest-modal {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+}
+
+.guest-modal h2 {
+  margin: 0 0 8px;
+  color: #2c3e50;
+}
+
+.guest-modal p {
+  color: #7f8c8d;
+  margin-bottom: 20px;
+}
+
+.guest-modal input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.guest-modal input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.guest-modal button {
+  width: 100%;
+  padding: 12px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.guest-modal button:hover {
+  background: #2980b9;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  font-size: 18px;
+  color: #7f8c8d;
+}
+
+.empty-state {
+  text-align: center;
+  color: #95a5a6;
+  padding: 40px;
+}
+
+.dragging-over {
+  background: #e3f2fd;
+}

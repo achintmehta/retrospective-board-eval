@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #fff;
+  color: #333;
+}
+
+#root {
+  min-height: 100vh;
+}

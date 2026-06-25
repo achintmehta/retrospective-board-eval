@@ -1,0 +1,151 @@
+.board-page {
+  padding: 24px;
+  height: calc(100vh - 57px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.board-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.board-toolbar h2 {
+  color: var(--text-heading);
+  font-size: 24px;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-badge {
+  padding: 6px 12px;
+  background: var(--primary);
+  color: white;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.export-btn {
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.export-btn:hover {
+  background: var(--column-bg);
+}
+
+.add-column-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.add-column-form input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  width: 200px;
+}
+
+.add-column-form input:focus {
+  border-color: var(--primary);
+}
+
+.add-column-form button {
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.add-column-form button:hover {
+  background: var(--column-bg);
+}
+
+.columns-container {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  flex: 1;
+  align-items: flex-start;
+  padding-bottom: 16px;
+}
+
+.column {
+  background: var(--column-bg);
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 300px;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
+.column-drag-over {
+  background: #e0e7ff;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.column-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-count {
+  background: var(--border);
+  color: var(--text-light);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.cards-list {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 2px;
+}
+
+.card-dragging {
+  opacity: 0.9;
+}
+
+.board-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 57px);
+  color: var(--text-light);
+  font-size: 18px;
+}

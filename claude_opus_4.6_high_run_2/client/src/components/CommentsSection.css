@@ -1,0 +1,62 @@
+.comments-section {
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.comment {
+  font-size: 0.8rem;
+  padding: 6px 8px;
+  background: var(--bg);
+  border-radius: 4px;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: var(--text);
+  margin-right: 6px;
+}
+
+.comment-content {
+  display: inline;
+  color: var(--text-muted);
+}
+
+.comment-form {
+  display: flex;
+  gap: 6px;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  outline: none;
+}
+
+.comment-form input:focus {
+  border-color: var(--primary);
+}
+
+.comment-form button {
+  padding: 6px 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.comment-form button:hover {
+  background: var(--primary-hover);
+}

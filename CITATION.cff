@@ -1,16 +1,17 @@
 cff-version: 1.2.0
 message: "If you use this dataset or software, please cite it as below."
 title: "Realtime Retrospective Board: AI Model Benchmark Dataset and Evaluation Artifacts"
-abstract: "Dataset, scoring rubric, and implementation artifacts from an observational study of 22 agentic code-generation implementations of a standardized real-time retrospective board application, evaluated across multiple language-model variants, scaffold configurations, effort modes, and tool-access conditions."
+abstract: "Dataset, scoring rubric, and implementation artifacts from an observational study of 41 agentic code-generation runs implementing a standardized real-time retrospective board application, evaluated across multiple language-model variants, scaffold configurations, effort modes, and tool-access conditions."
 type: dataset
 authors:
   - family-names: Mehta
     given-names: Achint
-version: "v1.0.0"
-date-released: "2026-06-21"
+version: "v2.0.0"
+date-released: "2026-06-24"
 license: MIT
 url: "https://github.com/achintmehta/retrospective-board-eval"
 repository-code: "https://github.com/achintmehta/retrospective-board-eval"
+doi: "10.5281/zenodo.20789639"
 keywords:
   - large language models
   - code generation
@@ -19,7 +20,7 @@ keywords:
   - software engineering
 preferred-citation:
   type: article
-  title: "Tool Access, Scaffold Configuration, and Model Generation as Determinants of Artifact Quality in Agentic Code Generation: An Observational Study of 22 Implementations"
+  title: "Tool Access, Scaffold Configuration, and Model Generation as Determinants of Artifact Quality in Agentic Code Generation: An Observational Study of 41 Implementations"
   authors:
     - family-names: Mehta
       given-names: Achint

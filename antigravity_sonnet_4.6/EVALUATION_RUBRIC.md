@@ -23,13 +23,12 @@ Use this rubric to evaluate the quality and completeness of the retrospective bo
 | **10** | **Realtime Updates**: Does a card moved to a different column reflect in other browser windows instantly without refresh? | Pass | 3 | |
 | **11** | **Realtime Updates**: Does a new comment added to a card reflect in other browser windows instantly without refresh? | Pass | 3| |
 | **12** | **Data Persistence**: Does data survive a server reboot? | Pass | 3 | |
-| **13** | **Data Persistence**: Does data survive a container restart? | Pass | 3| |
-| **14** | **Documentation**: Is there documentation for the API and running the app? | Pass | 3| |
-| **15** | **Export**: Does the app export data to CSV? | Pass | 3| |
+| **13** | **Documentation**: Is there documentation for the API and running the app? | Pass | 3| |
+| **14** | **Export**: Does the app export data to CSV? | Pass | 3| |
 ---
 
 ## Final Summary
-**Total Score:** 45/45
+**Total Score:** 42/42
 ## Additional Notes
 - 
 

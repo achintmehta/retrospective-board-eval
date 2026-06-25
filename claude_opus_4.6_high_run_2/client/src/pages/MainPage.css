@@ -1,0 +1,90 @@
+.main-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.main-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.main-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.create-board-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.create-board-form input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.create-board-form input:focus {
+  border-color: var(--primary);
+}
+
+.create-board-form button {
+  padding: 12px 24px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.create-board-form button:hover {
+  background: var(--primary-hover);
+}
+
+.boards-list {
+  display: grid;
+  gap: 12px;
+}
+
+.board-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  box-shadow: var(--shadow);
+}
+
+.board-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.board-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.board-date {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px;
+}

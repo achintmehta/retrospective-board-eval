@@ -1,0 +1,424 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Home Page */
+.home-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.home-page h1 {
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: #1a1a2e;
+}
+
+.create-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.create-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.create-form input:focus {
+  outline: none;
+  border-color: #4a6cf7;
+}
+
+.create-form button {
+  padding: 10px 20px;
+  background: #4a6cf7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.create-form button:hover {
+  background: #3a5ce5;
+}
+
+.board-list {
+  display: grid;
+  gap: 12px;
+}
+
+.board-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+}
+
+.board-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.board-card h3 {
+  margin: 0;
+  color: #1a1a2e;
+}
+
+.board-date {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.empty {
+  color: #888;
+  text-align: center;
+  padding: 40px;
+}
+
+/* Board Page */
+.board-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.board-header {
+  background: white;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+
+.board-header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.board-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.add-column-form {
+  display: flex;
+  gap: 6px;
+}
+
+.add-column-form input {
+  padding: 8px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.add-column-form input:focus {
+  outline: none;
+  border-color: #4a6cf7;
+}
+
+.add-column-form button,
+.export-btn {
+  padding: 8px 16px;
+  background: #4a6cf7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.export-btn {
+  background: #28a745;
+}
+
+.export-btn:hover {
+  background: #22943d;
+}
+
+.add-column-form button:hover {
+  background: #3a5ce5;
+}
+
+/* Columns */
+.columns-container {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  overflow-x: auto;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.column {
+  background: #e2e6ea;
+  border-radius: 10px;
+  padding: 12px;
+  min-width: 280px;
+  max-width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.column-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding: 4px 8px;
+  color: #333;
+}
+
+.card-list {
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.card.dragging {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  transform: rotate(3deg);
+}
+
+.card-content {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  word-break: break-word;
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.card-comments {
+  color: #4a6cf7;
+}
+
+.add-card-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.add-card-form input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 2px solid transparent;
+  background: white;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.add-card-form input:focus {
+  outline: none;
+  border-color: #4a6cf7;
+}
+
+.add-card-form button {
+  padding: 6px 12px;
+  background: #4a6cf7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+}
+
+.modal h2 {
+  margin-bottom: 8px;
+  font-size: 1.4rem;
+}
+
+.modal p {
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.modal form {
+  display: flex;
+  gap: 8px;
+}
+
+.modal input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.modal input:focus {
+  outline: none;
+  border-color: #4a6cf7;
+}
+
+.modal button[type="submit"] {
+  padding: 10px 20px;
+  background: #4a6cf7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.modal button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Card Detail Modal */
+.card-detail {
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.card-detail .close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #888;
+}
+
+.card-detail-author {
+  font-size: 0.9rem;
+  color: #888 !important;
+  margin-bottom: 20px !important;
+}
+
+.comments-section {
+  margin-top: 16px;
+}
+
+.comments-section h3 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.comment {
+  background: #f5f6f8;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.comment p {
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.comment-meta {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.comment-form {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.comment-form input:focus {
+  outline: none;
+  border-color: #4a6cf7;
+}
+
+.comment-form button {
+  padding: 10px 16px;
+  background: #4a6cf7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: #888;
+}

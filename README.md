@@ -1,12 +1,14 @@
 # Realtime Retrospective Board — Model & Agent Comparison Report
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20789639.svg)](https://doi.org/10.5281/zenodo.20789639)
+
 **🌐 [View the interactive report](https://achintmehta.github.io/retrospective-board-eval/)**
 
 ---
 
 **Project:** Realtime Retrospective Board (Node.js + React + Socket.io + SQLite)  
 **Evaluation Date:** May 2026  
-**Number of Implementations:** 22
+**Number of Implementations:** 41
 
 ---
 

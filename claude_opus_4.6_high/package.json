@@ -4,20 +4,20 @@
   "description": "Real-time retrospective board application",
   "main": "server/index.js",
   "scripts": {
-    "dev": "concurrently \"node server/index.js\" \"npm run dev --prefix client\"",
-    "start": "node server/index.js",
-    "build": "npm run build --prefix client"
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "node server/index.js",
+    "client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "npm run build && node server/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "better-sqlite3": "^12.10.0",
+    "better-sqlite3": "^12.9.0",
+    "concurrently": "^9.2.1",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "socket.io": "^4.8.3"
-  },
-  "devDependencies": {
-    "concurrently": "^9.2.1"
   }
 }

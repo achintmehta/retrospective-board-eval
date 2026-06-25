@@ -1,0 +1,104 @@
+.card-item {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border);
+}
+
+.card-content {
+  color: var(--text-heading);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-author {
+  font-size: 12px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.comments-toggle {
+  font-size: 12px;
+  color: var(--primary);
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: 500;
+}
+
+.comments-toggle:hover {
+  text-decoration: underline;
+}
+
+.comments-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.comments-list {
+  list-style: none;
+  margin-bottom: 8px;
+}
+
+.comment-item {
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: var(--text-heading);
+  margin-right: 6px;
+}
+
+.comment-text {
+  color: var(--text);
+}
+
+.comment-form {
+  display: flex;
+  gap: 6px;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+
+.comment-form input:focus {
+  border-color: var(--primary);
+}
+
+.comment-form button {
+  padding: 6px 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.comment-form button:hover {
+  background: var(--primary-hover);
+}

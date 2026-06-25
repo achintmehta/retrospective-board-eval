@@ -23,14 +23,13 @@ Use this rubric to evaluate the quality and completeness of the retrospective bo
 | **10** | **Realtime Updates**: Does a card moved to a different column reflect in other browser windows instantly without refresh? | Pass | 3 | |
 | **11** | **Realtime Updates**: Does a new comment added to a card reflect in other browser windows instantly without refresh? | Pass | 3| |
 | **12** | **Data Persistence**: Does data survive a app restart? | Pass | 3 | |
-| **13** | **Data Persistence**: Does data survive a container restart? | Pass | 3 | |
-| **14** | **Documentation**: Is there documentation for the API and running the app? | Pass | 3 | |
-| **15** | **Export**: Does the app export data to CSV? | Fail | 2 | Comment replies do not get exported to CSV. |
+| **13** | **Documentation**: Is there documentation for the API and running the app? | Pass | 3 | |
+| **14** | **Export**: Does the app export data to CSV? | Fail | 2 | Comment replies do not get exported to CSV. |
 
 ---
 
 ## Final Summary
-**Total Score:** 43/45
+**Total Score:** 40/42
 ## Additional Notes
 1. docker run failed and this was the reason "Missing Module Error (Cannot find module '/app/dist/server.js') This happened when you ran the container without the volume attached. The container started up, but it immediately crashed because the Dockerfile forgot to compile the backend TypeScript code into Javascript (dist/server.js) during the build process!". Another reason for failure was "he underlying path-to-regexp library in Express 5 is very strict now and rejects /(.*) as well.
 

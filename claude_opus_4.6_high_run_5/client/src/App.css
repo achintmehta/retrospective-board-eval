@@ -1,0 +1,24 @@
+.app-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.app-header a {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.app-header a:hover {
+  text-decoration: underline;
+}
