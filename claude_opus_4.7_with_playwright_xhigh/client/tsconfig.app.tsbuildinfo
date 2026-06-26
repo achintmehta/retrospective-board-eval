@@ -1,1 +1,0 @@
-{"root":["./src/app.tsx","./src/api.ts","./src/main.tsx","./src/session.ts","./src/socket.ts","./src/types.ts","./src/components/addcardform.tsx","./src/components/addcolumnform.tsx","./src/components/commentsmodal.tsx","./src/components/guestauthmodal.tsx","./src/pages/boardpage.tsx","./src/pages/mainpage.tsx"],"version":"5.9.3"}

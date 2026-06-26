@@ -1,0 +1,16 @@
+node_modules
+dist
+client/node_modules
+client/dist
+.git
+.gitignore
+*.sqlite
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+.env
+.env.local
+openspec
+README.md
+images
+.claude

@@ -1,7 +1,7 @@
 # Implementation Rubric: Realtime Retrospective Board
 
 Model Name: Claude Sonnet 4.6
-Agent: Claude
+Agent: Claude Code
 Effort Mode: High
 UI testing model/tool: None
 UI testing functionality invoked: No

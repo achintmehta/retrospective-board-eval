@@ -1,0 +1,10 @@
+node_modules
+client/node_modules
+client/dist
+.git
+*.log
+.env
+data
+openspec
+images
+.claude

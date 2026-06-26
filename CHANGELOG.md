@@ -4,6 +4,38 @@ All notable changes to this dataset and its evaluation artifacts are documented 
 Scores are derived from the per-run `EVALUATION_RUBRIC.md` files; each run's total is the
 sum of its per-criterion ratings.
 
+## v2.1.0 — 2026-06-26
+
+This release **expands the sample and introduces a reasoning-effort dimension.** The scoring
+instrument is unchanged (14 criteria × 3 = 42 max); every change below is to sample size or to
+rubric **metadata formatting only**. No criterion rating or total was altered — each reported
+total still equals the sum of that run's 14 ratings (verified programmatically).
+
+### Data and sampling
+- Added **31 graded runs**, bringing the dataset to **72 runs** (previously 41):
+  - **+5** `Opus 4.6 · High · design-prompt` replicates, turning the design-prompt comparison
+    into a matched set (previously a single run).
+  - **+26** `Opus 4.7` runs completing a 2 × 3 design — **{High, xHigh} × {base, +Playwright,
+    +design prompt}**, six replicates per cell.
+- This is the dataset's first **effort contrast** (High vs xHigh); the 4.6-family models do not
+  expose an xHigh effort level, so it is run entirely within Opus 4.7.
+
+### Metadata normalization
+- Standardized the `EVALUATION_RUBRIC.md` header fields — **Agent**, **Effort Mode**,
+  **UI testing model/tool**, and **UI testing functionality invoked** — to consistent casing and
+  canonical labels across all runs (e.g. `claude code` / `Claude` → `Claude Code`; `playwright`
+  → `Playwright`; `No` → `None` for the tool field; the legacy `UI testing tool:` label →
+  `UI testing model/tool:`). These edits are cosmetic; no score changed.
+
+### What the new data shows
+- **Reasoning effort buys first-try reliability.** Pooling the Opus 4.7 cells, the
+  first-try-perfect (42/42) rate rises from **28 % at High to 89 % at xHigh**, with the
+  High-level misses concentrated in first-run environment failures (npm, Docker, persistence).
+  The cost premium for xHigh is ~10–30 % on the median.
+- **The tool and design-prompt findings replicate at the new tier.** Adding Playwright leaves the
+  functional score unchanged at +42–68 % cost; the design prompt leaves the functional score
+  unchanged at +40–55 % cost (its payoff remains aesthetic, not functional).
+
 ## v2.0.0 — 2026-06-24
 
 This release **finalizes the evaluation instrument and expands the sample.** Every change

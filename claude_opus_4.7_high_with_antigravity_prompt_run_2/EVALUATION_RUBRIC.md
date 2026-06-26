@@ -4,7 +4,7 @@ Model Name: Claude Opus 4.7
 Agent: Claude Code
 Effort Mode: High
 UI testing model/tool: None
-UI testing functionality invoked: None
+UI testing functionality invoked: No
 
 Use this rubric to evaluate the quality and completeness of the retrospective board implementation.
 

@@ -1,0 +1,24 @@
+{
+  "name": "retro-board",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted real-time retrospective board (Express + Socket.io + SQLite + React)",
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "nodemon --watch server server/index.js",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "start": "node server/index.js",
+    "postinstall": "npm --prefix client install"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "nodemon": "^3.1.4"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules
+dist
+client/dist
+client/node_modules
+*.sqlite
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+.env
+.env.local
+.DS_Store
+data/

@@ -1,20 +1,24 @@
-# Realtime Retrospective Board — Model & Agent Comparison Report
+# Realtime Retrospective Board — Model & Agent Evaluation
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20789639.svg)](https://doi.org/10.5281/zenodo.20789639)
 
 **🌐 [View the interactive report](https://achintmehta.github.io/retrospective-board-eval/)**
 
+An observational study of **72 agentic code-generation runs**, each implementing the *same* real-time
+retrospective-board specification, scored on a 14-criterion functional rubric (42-point scale) and reviewed
+for visual quality. The dataset spans multiple model generations (Opus 4.7, Opus 4.6, Sonnet 4.6, Gemini 3.1,
+Qwen), two agent harnesses (Claude Code, Antigravity), reasoning-effort levels (High, xHigh, Max), a
+screenshot-testing tool (Playwright), and a design-oriented system prompt — with replicate runs of identical
+configurations to quantify run-to-run variation.
+
+**Evaluation period:** May–June 2026 · **Runs:** 72 · **Scale:** /42 (14 criteria × 3) · **History:** see [CHANGELOG.md](CHANGELOG.md)
+
 ---
 
-**Project:** Realtime Retrospective Board (Node.js + React + Socket.io + SQLite)  
-**Evaluation Date:** May 2026  
-**Number of Implementations:** 41
+## The task
 
----
-
-## The Task
-
-Each implementation received the same OpenSpec: build a self-hosted, real-time retrospective board with a React/Vite frontend and a Node.js backend. Requirements included:
+Every run received the same OpenSpec: build a self-hosted, real-time retrospective board with a React/Vite
+frontend and a Node.js backend. Requirements:
 
 - Board creation and listing (SQLite persistence)
 - Configurable columns per board
@@ -22,204 +26,100 @@ Each implementation received the same OpenSpec: build a self-hosted, real-time r
 - Card management with drag-and-drop between columns
 - Nested comments on cards
 - Real-time sync via WebSockets (Socket.io) across all connected clients
-- Docker deployment (single container)
+- Single-container Docker deployment
 - CSV export
 - Developer documentation
 
-The rubric scored each of 15 criteria as: **Pass/3** (worked first try), **Fail/2** (fixed after prompting), or **Fail/0–1** (could not be fixed).
+Claude Code runs were produced with **Claude Code v2.1.132**, using the `/opsx:apply` command to have the
+agent implement the OpenSpec specification.
+
+## Scoring rubric (14 criteria · 42-point scale)
+
+Each of 14 functional criteria is rated **3** (passed first try), **2** (fixed after one prompt), or **1**
+(never fully worked). A run's total is the sum of its 14 ratings, recorded in its `EVALUATION_RUBRIC.md`.
+*(This 14-criterion / 42-point instrument superseded an earlier 15-criterion / 45-point scale in v2.0; see
+[CHANGELOG.md](CHANGELOG.md).)*
 
 ---
 
-## Scoring Key
+## Dataset at a glance
 
-| Rating | Meaning |
-|--------|---------|
-| 3 | Pass — worked without any changes |
-| 2 | Fail — fixed after prompting the agent |
-| 1 | Fail — partially fixed but still broken |
-| 0 | Fail — could not be fixed at all |
+| Model family | Runs | Agent(s) | Functional score (mean, range) | Session cost (range) |
+|---|---|---|---|---|
+| **Claude Opus 4.7** | 36 | Claude Code | 41.4 (39–42) | $2.22–7.63 |
+| **Claude Opus 4.6** | 21 | Claude Code, Antigravity | 40.6 (38–42) | $2.04–6.62 |
+| **Claude Sonnet 4.6** | 10 | Claude Code, Antigravity | 41.0 (39–42) | $1.08–4.90 |
+| **Gemini 3.1 (Pro/Flash)** | 3 | Antigravity | 39.3 (38–40) | — |
+| **Qwen (3.6 / Coder Next)** | 2 | Claude Code | 30.5 (24–37) | $41–179 *(orchestration only)* |
 
----
+Qwen ran locally at no inference charge; the dollar figures are the cost of the Claude orchestration layer
+driving the agentic loop, not the Qwen model itself.
 
-## Results by Implementation
+## Opus 4.7 effort sweep
 
-### Claude Opus 4.7 — Perfect Scores
+A 2 × 3 design — **{High, xHigh} × {base, +Playwright, +design prompt}**, six replicate runs per cell:
 
-| Implementation | Score / 45 | Local Dev | Docker | Card Move | Realtime | Notes |
-|---|---|---|---|---|---|---|
-| `claude_opus_4.7_high` | **45/45** | ✅ | ✅ | ✅ | ✅ | Perfect first-shot; no fixes needed |
-| `claude_opus_4.7_with_playwright_high` | **45/45** | ✅ | ✅ | ✅ | ✅ | Perfect; Playwright UI tests confirmed all features |
-| `claude_opus_4.7_with_playwright_xhigh` | **45/45** | ✅ | ✅ | ✅ | ✅ | Perfect; most lines of code (2,633) |
-| `claude_opus_4.7_xhigh` | **45/45** | ✅ | ✅ | ✅ | ✅ | Perfect |
-| `claude_opus_4.7_xhigh_with_antigravity_prompt` | **45/45** | ✅ | ✅ | ✅ | ✅ | Perfect; largest codebase (3,676 lines) |
-
-### Antigravity Agent — Claude & Gemini
-
-| Implementation | Score / 45 | Local Dev | Docker | Card Move | Realtime | Notes |
-|---|---|---|---|---|---|---|
-| `antigravity_claude_sonnet_4.6` | **45/45** | ✅ | ✅ | ✅ | ✅ | Perfect; used GPT-OSS 120B as browser QA subagent |
-| `antigravity_opus_4.6` | **41/45** | ✅ | ❌→✅ | ❌→✅ | ✅ | Docker build failed (gyp); card move bug fixed after prompting |
-| `antigravity_gemini_3.1_pro_high` | **41/45** | ✅ | ❌→✅ | ✅ | ✅ | Docker: GLIBC mismatch + Express 5 wildcard routing bug |
-| `antigravity_gemini_3.1_pro_low` | **41/45** | ✅ | ❌→✅ | ✅ | ✅ | Docker: TypeScript not compiled; Express 5 catch-all bug; CSV missing comment replies |
-| `antigravity_gemini3_flash` | **38/45** | ❌ | ✅ | ✅ | ✅ | Would not start on first run; homepage then board page blank after fixes; wrong Docker volume docs |
-
-### Claude Code Agent — Sonnet 4.6
-
-| Implementation | Score / 45 | Local Dev | Docker | Card Move | Realtime | Notes |
-|---|---|---|---|---|---|---|
-| `claude_sonnet_4.6_with_playwright_xhigh` | **45/45** | ✅ | ✅ | ✅ | ✅ | Perfect; Playwright confirmed all features; $2.57 |
-| `claude-sonnet_4.6_xhigh` | **44/45** | ❌→✅ | ✅ | ✅ | ✅ | better-sqlite3 native compile failed on Windows; switched to sql.js (WASM) |
-| `claude_sonnet_4.6_with_playwright_high` | **41/45** | ✅ | ❌→✅ | ✅ | ✅ | Docker OK after fix; comment datatype mismatch in container never fully fixed (score 1) |
-| `claude-sonnet_4.6_xhigh_with_antigravity_prompt` | **43/45** | ✅ | ✅ | ❌→✅ | ✅ | Drag-and-drop didn't work first try; fixed after prompting |
-| `claude_sonnet_4.7_high` | **40/45** | ✅ | ❌→✅ | ✅ | ❌→✅ | Docker: invalid ELF header (cross-compile); realtime card/column updates needed fixing |
-
-### Claude Code Agent — Opus 4.6
-
-| Implementation | Score / 45 | Local Dev | Docker | Card Move | Realtime | Notes |
-|---|---|---|---|---|---|---|
-| `claude_opus_4.6_xhigh_with_antigravity_prompt` | **43/45** | ✅ | ❌→✅ | ✅ | ✅ | Docker: better-sqlite3 gyp failure |
-| `claude-opus-4.6_xhigh` | **42/45** | ✅ | ❌→✅ | ✅ | ✅ | Docker volume mounted over /app; container persistence fix needed |
-| `claude-opus-4.6_with_playwright_high` | **41/45** | ✅ | ❌→✅ | ❌→✅ | ✅ | Docker + card move both needed fixes; move left ghost duplicate card |
-| `claude-opus-4.6_with_playwright_xhigh` | **40/45** | ✅ | ❌→✅ | ❌ | ✅ | Card move causes blank dashboard; couldn't be fully fixed (score 1) |
-| `claude_opus_4.6_high` | **38/45** | ✅ | ❌→✅ | ❌ | ❌→✅ | Card move never fixed; realtime card add fixed after prompting |
-
-### Non-Claude Models (Local — No Inference Cost)
-
-| Implementation | Score / 45 | Local Dev | Docker | Card Move | Realtime | Notes |
-|---|---|---|---|---|---|---|
-| `claude_qwen_3.6_high` | **33/45** | ✅ | ❌→✅ | ❌→✅ | ✅ | Board creation broken; name input bug; comment crashed page. Local model — no inference cost |
-| `claude_qwen_coder_next_high_with_playwright` | **16/45** | ❌→✅ | ❌→✅ | ❌ | ❌ | Most features broken or missing; worst overall result. Local model — no inference cost |
-
-> **Note on Qwen costs:** Both Qwen runs used locally-hosted models. The dollar figures Claude Code reported ($41 and $178) reflect the cost of the **Claude orchestration layer** (Claude Opus 4.7 acting as the agent harness), not the Qwen model inference itself, which ran locally at no charge.
+| Cell | Mean score | First-try perfect (42/42) | Cost (median) | Aesthetics (mean /5) |
+|---|---|---|---|---|
+| High · base | 41.0 | 2/6 | $3.06 | 3.0 |
+| High · +Playwright | 41.5 | 3/6 | $4.34 | 3.0 |
+| High · +design prompt | 40.5 | 0/6 | $4.28 | 4.7 |
+| xHigh · base | 42.0 | 6/6 | $3.33 | 3.0 |
+| xHigh · +Playwright | 42.0 | 6/6 | $5.59 | 3.0 |
+| xHigh · +design prompt | 41.5 | 4/6 | $5.17 | 4.8 |
 
 ---
 
-## Visual Aesthetics Ratings
+## Key findings
 
-Each implementation was rated 1–5 based on direct review of dashboard and board page screenshots, evaluating: visual polish, colour/typography coherence, layout quality, and professional feel.
+**1. Capability tier dominates everything else.** The frontier models (Opus 4.7/4.6, Sonnet 4.6) all cluster
+near the 42-point ceiling (family means ≈ 41); the cheap local model (Qwen) collapses to 24–37 while costing
+20–90× more in orchestration. The ~10-point tier gap dwarfs anything tools, prompt, or effort do *within* a
+tier (≤ 1–2 points).
 
-| Rating | Meaning |
-|--------|---------|
-| 5 | Production-ready — branded, polished, dark/light theme with personality |
-| 4 | Professional — clear design language, good colour use, cohesive |
-| 3 | Functional — clean and usable but minimal styling, no strong identity |
-| 2 | Basic — default-adjacent, sparse, or layout issues visible |
-| 1 | Unstyled — raw browser defaults, UI bugs visible in screenshots |
+**2. The screenshot tool added cost, not quality or reliability.** Turning Playwright on vs. off leaves the
+functional score unchanged at both effort levels, while raising cost **+42 % (High) to +68 % (xHigh)** on the
+median. Playwright-High runs still failed on Docker — a fault a passive screenshot cannot see. The tool
+surfaces rendered-UI issues, not the build/runtime/persistence faults where failures actually live.
 
-| Implementation | Aesthetic Score | Style Notes |
-|---|---|---|
-| `claude_opus_4.7_xhigh_with_antigravity_prompt` | ⭐⭐⭐⭐⭐ 5/5 | Dark gradient hero page with marketing tagline; colour-coded columns with avatar chips and timestamp badges; standout visual design |
-| `claude-sonnet_4.6_xhigh_with_antigravity_prompt` | ⭐⭐⭐⭐⭐ 5/5 | Dark gradient hero with "Run better retrospectives" marketing copy; colour-dot per column; polished board view |
-| `antigravity_claude_sonnet_4.6` | ⭐⭐⭐⭐ 4/5 | Clean dark mode with branded navbar, card details view with structured layout |
-| `antigravity_opus_4.6` | ⭐⭐⭐⭐ 4/5 | Dark themed with avatar initials, colour-coded column headers (green/yellow/blue), user chip in nav |
-| `claude_sonnet_4.6_with_playwright_high` | ⭐⭐⭐⭐ 4/5 | Bold indigo header bar, prominent branding, comment count badges on cards |
-| `claude_sonnet_4.6_with_playwright_xhigh` | ⭐⭐⭐⭐ 4/5 | Strong indigo/blue header, clean column layout, dashed add-column affordance |
-| `claude_sonnet_4.7_high` | ⭐⭐⭐⭐ 4/5 | Deep indigo header bar, clean white card surfaces, good vertical rhythm |
-| `claude_opus_4.7_xhigh` | ⭐⭐⭐ 3/5 | Minimal dark theme; functional but textarea inputs exposed inline on board; sparse |
-| `claude_opus_4.7_high` | ⭐⭐⭐ 3/5 | Clean light theme, inline comments work well, card layout readable |
-| `claude_opus_4.7_with_playwright_high` | ⭐⭐⭐ 3/5 | Plain light, basic typography, no strong branding |
-| `claude_opus_4.7_with_playwright_xhigh` | ⭐⭐⭐ 3/5 | Very minimal — plain "Retro Board" text nav, no colour accents beyond one blue button |
-| `claude_opus_4.6_high` | ⭐⭐⭐ 3/5 | Clean light with purple accent button, good spacing, readable |
-| `claude-opus-4.6_with_playwright_high` | ⭐⭐⭐ 3/5 | Clean light, minimal but well-structured column layout |
-| `claude-sonnet_4.6_xhigh` | ⭐⭐⭐ 3/5 | Light, clean columns, green Export CSV accent button |
-| `claude-opus-4.6_xhigh` | ⭐⭐⭐ 3/5 | Blue header bar, basic functional layout |
-| `antigravity_gemini_3.1_pro_low` | ⭐⭐⭐ 3/5 | Clean white with purple accents, decent card layout, functional |
-| `claude_opus_4.6_xhigh_with_antigravity_prompt` | ⭐⭐ 2/5 | Dark but screenshot is very low resolution; text hard to read; layout cramped |
-| `claude-opus-4.6_with_playwright_xhigh` | ⭐⭐ 2/5 | Completely unstyled — raw browser defaults, plain black hyperlinks, no CSS |
-| `antigravity_gemini_3.1_pro_high` | ⭐⭐ 2/5 | Plain white, zero visual design, indistinguishable from raw HTML output |
-| `antigravity_gemini3_flash` | ⭐⭐ 2/5 | Dark background but layout crowded to top-left corner; board view sparse |
-| `claude_qwen_3.6_high` | ⭐⭐ 2/5 | Default browser styling, generic blue Create Board button, no visual identity |
-| `claude_qwen_coder_next_high_with_playwright` | ⭐ 1/5 | Completely unstyled; "Invalid Date" visible in dashboard; jarring green Add Column button |
+**3. Reasoning effort buys first-try reliability.** Pooling the Opus 4.7 cells, the first-try-perfect rate
+rises from **28 % at High to 89 % at xHigh**, for only ~10–30 % more cost. The High-level misses are almost
+entirely first-run environment failures (npm install, Docker, data persistence) — exactly what more
+deliberation catches. The reliability the tool didn't deliver, effort did, at a fraction of the cost.
 
-### Aesthetic Key Finding: The Antigravity Prompt Dramatically Lifts Visual Quality
+**4. The design prompt lifts aesthetics, not function.** With the design-oriented system prompt, functional
+scores are unchanged, but visual quality jumps: **design-prompt runs average 4.5/5 vs 3.0/5** for non-design
+runs. The lift is independent of effort (xHigh base = 3/5, same as High base) and tool — the prompt, not
+compute, drives polish. Cost rises +40–55 %.
 
-The two strongest visual designs — `claude_opus_4.7_xhigh_with_antigravity_prompt` and `claude-sonnet_4.6_xhigh_with_antigravity_prompt` — both used the Antigravity system prompt. This prompt appears to encourage models to invest in visual design, branding, and UX copy (hero taglines, colour-coded columns, avatar indicators) in a way the default Claude prompt does not. Without it, even perfect-scoring implementations tend to produce functionally adequate but visually plain UIs.
+**5. Within-configuration variability is real but effort-sensitive.** At High effort, identical prompts
+scatter 39–42 functionally (and 24–627 lines of source CSS). At xHigh, the functional scatter collapses to a
+near-uniform 42 — the variability is largely a symptom of insufficient deliberation.
 
----
+**6. Docker and npm first-run failures are the dominant defect class.** The recurring culprits: `better-sqlite3`
+native compilation in Alpine containers (models that chose `sql.js`/WASM avoided it) and the Express 5 wildcard
+(`app.get('*')`) breaking change. Capability and effort catch these; the screenshot tool does not.
 
-## Score Summary Table (All 22 Implementations)
+## Visual aesthetics
 
-| # | Implementation | Model | Agent | Effort | Playwright | Score/45 | Aesthetic/5 |
-|---|---|---|---|---|---|---|---|
-| 1 | antigravity_claude_sonnet_4.6 | Sonnet 4.6 | Antigravity | — | GPT-OSS 120B | **45** | ⭐⭐⭐⭐ 4 |
-| 2 | antigravity_gemini3_flash | Gemini 3.1 Flash | Antigravity | — | No | 38 | ⭐⭐ 2 |
-| 3 | antigravity_gemini_3.1_pro_high | Gemini 3.1 Pro | Antigravity | High | No | 41 | ⭐⭐ 2 |
-| 4 | antigravity_gemini_3.1_pro_low | Gemini 3.1 Pro | Antigravity | Low | No | 41 | ⭐⭐⭐ 3 |
-| 5 | antigravity_opus_4.6 | Opus 4.6 | Antigravity | — | GPT-OSS 120B | 41 | ⭐⭐⭐⭐ 4 |
-| 6 | claude-opus-4.6_with_playwright_high | Opus 4.6 | Claude | High | Yes | 41 | ⭐⭐⭐ 3 |
-| 7 | claude-opus-4.6_with_playwright_xhigh | Opus 4.6 | Claude | xHigh | Yes | 40 | ⭐⭐ 2 |
-| 8 | claude-opus-4.6_xhigh | Opus 4.6 | Claude | xHigh | No | 42 | ⭐⭐⭐ 3 |
-| 9 | claude-sonnet_4.6_xhigh | Sonnet 4.6 | Claude | xHigh | No | 44 | ⭐⭐⭐ 3 |
-| 10 | claude-sonnet_4.6_xhigh_with_antigravity_prompt | Sonnet 4.6 | Claude | xHigh | No | 43 | ⭐⭐⭐⭐⭐ 5 |
-| 11 | claude_opus_4.6_high | Opus 4.6 | Claude | High | No | 38 | ⭐⭐⭐ 3 |
-| 12 | claude_opus_4.6_xhigh_with_antigravity_prompt | Opus 4.6 | Claude | xHigh | No | 43 | ⭐⭐ 2 |
-| 13 | claude_opus_4.7_high | Opus 4.7 | Claude | High | No | **45** | ⭐⭐⭐ 3 |
-| 14 | claude_opus_4.7_with_playwright_high | Opus 4.7 | Claude | High | Yes | **45** | ⭐⭐⭐ 3 |
-| 15 | claude_opus_4.7_with_playwright_xhigh | Opus 4.7 | Claude | xHigh | Yes | **45** | ⭐⭐⭐ 3 |
-| 16 | claude_opus_4.7_xhigh | Opus 4.7 | Claude | xHigh | No | **45** | ⭐⭐⭐ 3 |
-| 17 | claude_opus_4.7_xhigh_with_antigravity_prompt | Opus 4.7 | Claude | xHigh | No | **45** | ⭐⭐⭐⭐⭐ 5 |
-| 18 | claude_qwen_3.6_high | Qwen 3.6 | Claude | High | Yes | 33 | ⭐⭐ 2 |
-| 19 | claude_qwen_coder_next_high_with_playwright | Qwen Coder Next | Claude | High | Yes | 16 | ⭐ 1 |
-| 20 | claude_sonnet_4.6_with_playwright_high | Sonnet 4.6 | Claude | High | Yes | 41 | ⭐⭐⭐⭐ 4 |
-| 21 | claude_sonnet_4.6_with_playwright_xhigh | Sonnet 4.6 | Claude | xHigh | Yes | **45** | ⭐⭐⭐⭐ 4 |
-| 22 | claude_sonnet_4.7_high | Sonnet 4.7 | Claude | High | No | 40 | ⭐⭐⭐⭐ 4 |
-
----
-
-## Key Findings & Conclusions
-
-### 1. Claude Opus 4.7 is the clear winner — all 5 configurations scored perfect 45/45
-Every single Opus 4.7 run (at high or xHigh effort, with or without Playwright, with or without the Antigravity system prompt) produced a fully working implementation with zero manual fixes. This is a significant leap over Opus 4.6, which only achieved perfect scores in none of its runs.
-
-### 2. Docker deployment is the single most common failure point
-Docker broke in 11 of 22 implementations. The two culprits were nearly universal:
-- **`better-sqlite3` native compilation failure** — the library requires Python and build tools that are absent in Alpine Linux containers. Models that proactively chose `sql.js` (pure WASM) avoided this entirely.
-- **Express 5 breaking change** — Express 5 (now the npm default) removed the `app.get('*')` wildcard syntax, causing `PathError` crashes. Models unaware of this shipped broken containers.
-
-The most robust implementations (Opus 4.7, Antigravity Sonnet 4.6) either avoided these libraries or caught and fixed them without prompting.
-
-### 3. Card drag-and-drop is the hardest feature to get right on the first try
-Moving cards between columns had the highest failure-on-first-attempt rate of any functional feature (5 implementations had bugs). Failures ranged from silent no-ops, to blank dashboards after a move, to ghost duplicate cards. This feature requires tight coordination between the WebSocket broadcast, the database update, and the React state — making it easy for one layer to be out of sync.
-
-### 4. The Antigravity agent shines for Sonnet 4.6 but doesn't close the gap for Opus 4.6
-The Antigravity agent (which uses a browser sub-agent for UI testing) delivered a perfect 45/45 for Sonnet 4.6 — a better result than any standalone Sonnet 4.6 Claude Code run except the xHigh+Playwright combo. However, Antigravity Opus 4.6 still scored only 41/45. This suggests the agent's advantage comes from its ability to visually verify and fix issues, but it can't compensate for model capability gaps.
-
-### 5. The Antigravity system prompt helps Claude but doesn't dramatically change scores
-Adding the Antigravity system prompt to Claude runs improved Docker reliability and code quality (more lines written, more thorough), but didn't push scores above what the base models achieved. Opus 4.7 xHigh scored 45 with and without the prompt.
-
-### 6. Playwright UI testing correlates with, but doesn't guarantee, better outcomes
-Playwright-enabled runs caught more runtime bugs (e.g., the Sonnet 4.6 xHigh+Playwright run was perfect), but not always. Sonnet 4.6 High+Playwright scored only 41 because a Docker-specific comment bug (SQLite datatype mismatch) couldn't be reproduced or fixed without the container environment context.
-
-### 7. Non-Claude models performed significantly worse
-- **Gemini 3.1 Pro** (high and low effort): Scored 41/45 — solid functional coverage but Docker reliability issues.
-- **Gemini 3.1 Flash**: 38/45 — multiple startup failures and a blank UI required intervention.
-- **Qwen 3.6**: 33/45 — multiple core features needed fixing; also the most expensive Claude run at $41 total.
-- **Qwen Coder Next**: 16/45 — catastrophic failure; most features permanently broken despite spending $178. This is the worst result in the entire experiment, and far and away the most expensive.
-
-### 8. Cost vs. quality is not linear (for API-based models)
-Claude Opus 4.7 High cost **$3.15** and produced a perfect result. Claude Sonnet 4.6 xHigh cost **$1.40** after fixes and scored 44/45. The cheapest path to a working app is Claude Sonnet 4.6 (with Playwright at xHigh effort, $2.57) or any Opus 4.7 configuration (~$3–6).
-
-**Important caveat on Qwen costs:** Both Qwen runs used locally-hosted models, so they incurred **no inference charges**. The $41 and $178 figures reported by Claude Code represent the cost of the Claude Opus 4.7 *orchestration layer* that was driving the agentic loop — not the Qwen model itself. This makes the Qwen results even more striking: not only did the local models underperform significantly, but the Claude orchestration overhead alone cost more than the best-performing API runs.
-
-### 9. Effort mode (High vs. xHigh) has mixed impact
-For Opus 4.7, both High and xHigh achieved 45/45, so higher effort didn't add value but also didn't hurt. For Opus 4.6, xHigh generally outperformed High (42 vs. 38), suggesting the extra thinking budget helped a weaker model more. For Sonnet, xHigh was clearly better (44–45 vs. 40–41).
-
-### 10. Visual aesthetics correlate strongly with the Antigravity prompt, not model capability
-After reviewing all 44 screenshots, the two standout visual designs — Opus 4.7 xHigh+Antigravity and Sonnet 4.6 xHigh+Antigravity — both used the Antigravity system prompt. These produced marketing-style hero pages with bold taglines ("Run team retrospectives that feel alive"), dark gradient themes, colour-coded columns with dot indicators, avatar chips, and relative timestamps. Default Claude runs without the Antigravity prompt consistently produced clean-but-minimal UIs regardless of model version or effort level. Opus 4.7 at xHigh without the prompt scored 3/5 aesthetic despite scoring 45/45 functional. The prompt itself appears to contain strong UI/UX style guidance that overrides the model's default "write working code" instinct.
-
-Notably, `claude-opus-4.6_with_playwright_xhigh` produced a completely unstyled page (1–2/5 aesthetic) despite being an xHigh effort run — demonstrating that effort mode does not predict visual quality. And the functional failures (Qwen Coder Next) also corresponded with the worst visual quality (1/5), as a broken app tends not to have polished CSS either.
-
-### 11. The most reliable SQLite choice was `sql.js` (WASM), not `better-sqlite3`
-The `better-sqlite3` library repeatedly caused Docker failures across multiple models and configurations. Models that chose `sql.js` (a pure JavaScript/WASM SQLite port) avoided this entirely and shipped working containers on the first try. This is a meaningful architectural signal for future code generation benchmarks.
-
----
+Aesthetics were rated 1–5 from dashboard screenshots. The design-oriented prompt is the single strongest
+predictor of visual quality — its runs produced marketing-style hero pages (custom product names, gradient
+headlines, "no sign-up" copy), color-coded columns with avatar/emoji chips, and timestamp badges. Without it,
+even perfect-scoring implementations produced clean-but-plain default UIs. Notably, **effort does not predict
+aesthetics**: xHigh runs scored perfect functionally yet plain visually (3/5) unless the design prompt was present.
 
 ## Recommendations
 
-**For best first-shot results:** Use **Claude Opus 4.7** at any effort level — perfect score guaranteed across all tested configurations.
+- **For reliable first-shot results:** a frontier model (Opus 4.7 or Sonnet 4.6) at **higher effort** — effort,
+  not a UI-testing tool, is what removes first-run failures.
+- **Match the resource to the failure mode:** don't add a screenshot tool expecting reliability; the dominant
+  failures are build/environment issues a screenshot can't see. Spend on capability and effort instead.
+- **Use the design prompt only when you want visual polish** — it adds cost and aesthetics, not correctness.
+- **Watch for** `better-sqlite3` and Express 5 as recurring Node.js gotchas.
 
-**For cost-conscious teams:** Use **Claude Sonnet 4.6 with Playwright at xHigh** — perfect score at ~$2.57.
+## Reproducibility
 
-**Avoid:** Qwen Coder Next for full-stack agentic tasks — poor results at extreme cost.
-
-**Watch for:** Express 5 and `better-sqlite3` as common gotchas in Node.js agentic implementations — the community hasn't yet updated training data/conventions for these breaking changes.
+Per-run scores live in each `*/EVALUATION_RUBRIC.md` (total = sum of 14 ratings). Screenshots are under each
+run's `images/`. Methodology and version history are in [CHANGELOG.md](CHANGELOG.md) and [CITATION.cff](CITATION.cff);
+the dataset is archived on Zenodo (DOI above). The design-oriented system prompt is a third-party artifact and
+is intentionally not redistributed.

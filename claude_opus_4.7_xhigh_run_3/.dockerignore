@@ -1,0 +1,12 @@
+node_modules
+client/node_modules
+client/dist
+data
+*.sqlite
+.git
+.gitignore
+.vscode
+.idea
+openspec
+images
+*.md

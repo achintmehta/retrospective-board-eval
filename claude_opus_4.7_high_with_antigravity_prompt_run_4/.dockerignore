@@ -1,0 +1,11 @@
+node_modules
+client/node_modules
+client/dist
+data
+*.sqlite
+*.sqlite-journal
+.git
+.gitignore
+docs
+openspec
+images

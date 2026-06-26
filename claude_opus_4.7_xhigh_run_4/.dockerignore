@@ -1,0 +1,12 @@
+node_modules
+client/node_modules
+client/dist
+data
+.git
+.gitignore
+.dockerignore
+Dockerfile
+README.md
+docs
+openspec
+images

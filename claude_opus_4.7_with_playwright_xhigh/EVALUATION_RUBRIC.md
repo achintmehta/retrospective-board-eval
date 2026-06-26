@@ -1,9 +1,9 @@
 # Implementation Rubric: Realtime Retrospective Board
 
 Model Name: Claude Opus 4.7
-Agent: Claude
+Agent: Claude Code
 Effort Mode: xHigh
-UI testing tool: Playwright
+UI testing model/tool: Playwright
 UI testing functionality invoked: Yes
 
 Use this rubric to evaluate the quality and completeness of the retrospective board implementation.

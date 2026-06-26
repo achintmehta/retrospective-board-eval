@@ -1,0 +1,30 @@
+// Thin wrapper around the REST API. Same-origin in production; in dev the
+// Vite proxy forwards /api -> http://localhost:4000.
+
+async function request(path, options = {}) {
+  const res = await fetch(path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `Request failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export const api = {
+  listBoards: () => request('/api/boards'),
+  createBoard: (title) =>
+    request('/api/boards', {
+      method: 'POST',
+      body: JSON.stringify({ title }),
+    }),
+  getBoard: (id) => request(`/api/boards/${id}`),
+  createColumn: (boardId, title) =>
+    request(`/api/boards/${boardId}/columns`, {
+      method: 'POST',
+      body: JSON.stringify({ title }),
+    }),
+  exportUrl: (boardId) => `/api/boards/${boardId}/export`,
+};

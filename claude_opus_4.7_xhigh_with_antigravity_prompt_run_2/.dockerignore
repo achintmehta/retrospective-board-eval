@@ -1,0 +1,11 @@
+node_modules
+client/node_modules
+client/dist
+*.sqlite
+*.sqlite-journal
+.git
+.gitignore
+.env*
+openspec
+images
+CLAUDE.md

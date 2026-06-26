@@ -1,0 +1,12 @@
+node_modules
+client/node_modules
+client/dist
+data
+*.db
+*.db-journal
+.git
+.gitignore
+.env
+.DS_Store
+openspec
+images

@@ -1,0 +1,11 @@
+node_modules
+client/node_modules
+client/dist
+data
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+.git
+openspec
+images
+docs

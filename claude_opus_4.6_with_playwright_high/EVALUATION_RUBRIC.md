@@ -1,7 +1,7 @@
 # Implementation Rubric: Realtime Retrospective Board
 
 Model Name: Claude Opus 4.6
-Agent: Claude
+Agent: Claude Code
 Effort Mode: High
 UI testing model/tool: Playwright
 UI testing functionality invoked: Yes
