@@ -1,10 +1,10 @@
 {
   "title": "Realtime Retrospective Board: AI Model Benchmark Dataset and Evaluation Artifacts",
-  "description": "Dataset, scoring rubric, and implementation artifacts from an observational study of 72 agentic code-generation runs implementing a standardized real-time retrospective board application, evaluated across multiple language-model variants, scaffold configurations, effort modes, and tool-access conditions. Each run is scored against a 14-criterion functional rubric on a 3/2/1 scale (42-point maximum); per-run scores are recorded in the EVALUATION_RUBRIC.md files. See CHANGELOG.md for version history and methodology notes.",
+  "description": "Dataset, scoring rubric, and implementation artifacts from an observational study of 90 agentic code-generation runs implementing a standardized real-time retrospective board application, evaluated across multiple language-model variants, scaffold configurations, effort modes, and tool-access conditions. Each run is scored against a 14-criterion functional rubric on a 3/2/1 scale (42-point maximum); per-run scores are recorded in the EVALUATION_RUBRIC.md files. See CHANGELOG.md for version history and methodology notes.",
   "upload_type": "dataset",
   "access_right": "open",
   "license": "MIT",
-  "version": "v2.1.0",
+  "version": "v2.3.0",
   "creators": [
     {
       "name": "Mehta, Achint"

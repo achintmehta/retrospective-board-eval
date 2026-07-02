@@ -1,0 +1,14 @@
+node_modules
+client/node_modules
+client/dist
+data
+.git
+.gitignore
+*.log
+.env
+.env.*
+.DS_Store
+Thumbs.db
+openspec
+images
+CLAUDE.md

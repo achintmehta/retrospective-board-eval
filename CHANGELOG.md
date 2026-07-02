@@ -4,6 +4,51 @@ All notable changes to this dataset and its evaluation artifacts are documented 
 Scores are derived from the per-run `EVALUATION_RUBRIC.md` files; each run's total is the
 sum of its per-criterion ratings.
 
+## v2.3.0 — 2026-07-02
+
+This release **extends the abridged-prompt condition to xHigh effort and adds per-facet aesthetic
+ratings.** The scoring instrument is unchanged (14 criteria × 3 = 42 max); every change below is to
+sample size or to added artifacts. No criterion rating or total was altered — each reported total
+still equals the sum of that run's 14 ratings (verified programmatically).
+
+### Data and sampling
+- Added **6 graded runs**, bringing the dataset to **90 runs** (previously 84):
+  - **+6** `Opus 4.7 · xHigh · abridged-prompt`, completing the abridged-prompt condition across
+    both effort levels on Opus 4.7.
+
+### Added artifacts
+- `aesthetic_facet_ratings.csv` — per-facet visual-quality ratings (polish, color & typography,
+  layout & hierarchy, professional feel; 1–5 each, with the facet mean) complementing the single
+  holistic aesthetic score.
+
+### Fixes
+- Added the previously missing dashboard screenshot for
+  `claude_opus_4.7_xhigh_with_antigravity_prompt_run_3`.
+
+### What the new data shows
+- **At xHigh, abridging the specification costs about a point.** The full-specification xHigh base
+  runs were uniformly perfect (42/42); the abridged runs averaged **41.0** — the only tier where
+  abridging left a visible mark, consistent with the base already sitting at the ceiling.
+
+## v2.2.0 — 2026-07-02
+
+This release **introduces an abridged-prompt condition at High effort.** The scoring instrument is
+unchanged (14 criteria × 3 = 42 max); every change below is to sample size only. No criterion
+rating or total was altered — each reported total still equals the sum of that run's 14 ratings
+(verified programmatically).
+
+### Data and sampling
+- Added **12 graded runs**, bringing the dataset to **84 runs** (previously 72). All belong to a new
+  **abridged-prompt** condition, in which the agent received an abridged (condensed) version of the
+  specification, holding model and effort fixed against the full-specification base:
+  - **+6** `Opus 4.6 · High · abridged-prompt`
+  - **+6** `Opus 4.7 · High · abridged-prompt`
+
+### What the new data shows
+- **Abridging the specification barely changed High-effort functional scores**, which stayed within
+  a point of the full-specification base: Opus 4.6 High **41.2 vs 40.6** and Opus 4.7 High
+  **40.8 vs 41.0**.
+
 ## v2.1.0 — 2026-06-26
 
 This release **expands the sample and introduces a reasoning-effort dimension.** The scoring
@@ -47,32 +92,4 @@ ratings (verified programmatically).
 ### Scoring instrument (now 14 criteria, 42-point scale)
 - **Removed the "data persistence across a container restart" criterion.** It conflated
   deployment configuration (whether the operator runs the container with a mounted volume,
-  e.g. `-v`) with the model's code quality, so it did not measure the artifact itself. The
-  related "data survives a server reboot" criterion — a pure code property — is retained.
-- The rubric is therefore **14 criteria × 3 = 42 max** (previously 15 × 3 = 45). All runs
-  were re-scored under the finalized rubric.
-- The 3/2/1 scale is unchanged: **3** = passed on first try, **2** = failed then fixed after
-  a prompt, **1** = never fully worked.
-
-### Labels and metadata
-- Corrected model and effort labels against the recorded session logs:
-  - a run previously labeled "Sonnet 4.7" is **Claude Sonnet 4.6**;
-  - runs labeled "xHigh" on Opus 4.6 / Sonnet 4.6 were relabeled to their **executed effort**
-    (High or Max), because the 4.6-family models do not expose an xHigh effort level (xHigh
-    is genuine only on Opus 4.7).
-- Standardized run-folder names to use underscores consistently.
-
-### Data and sampling
-- Added replication runs for several configurations. The dataset now contains **41 graded
-  runs** (previously 22), including repeated runs of identical configurations to quantify
-  run-to-run variation.
-- Removed an exploratory single-run "with vs without Playwright" architecture comparison
-  (`IMPLEMENTATION_COMPARISON.md`). Its causal interpretation did not survive replication
-  across multiple runs; the run itself remains in the dataset as one sample.
-
-### Reporting
-- Rebuilt the interactive report (`index.html`) on the full 41-run set at the 42-point scale,
-  adding sections on run-to-run variation, tool access, architecture, aesthetics, and cost.
-
-## v1.0.0 — 2026-06-22
-- Initial release: 22 runs scored with a 15-criterion rubric (45-point scale).
+  e.g. `-v`) with the model's code quality, so it did not measure

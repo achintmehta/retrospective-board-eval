@@ -1,0 +1,13 @@
+node_modules
+client/node_modules
+server/dist
+client/dist
+data
+.git
+.gitignore
+.env
+.env.local
+*.log
+openspec
+images
+CLAUDE.md

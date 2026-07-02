@@ -1,0 +1,28 @@
+{
+  "name": "retro-board",
+  "version": "1.0.0",
+  "description": "Real-time retrospective board with guest sessions, live sync, and CSV export.",
+  "private": true,
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "dev:server": "node --watch server/index.js",
+    "dev:client": "npm --prefix client run dev",
+    "dev": "concurrently -k -n server,client -c cyan,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "start": "node server/index.js",
+    "postinstall": "npm --prefix client install"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "nanoid": "^5.0.7",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
+  "engines": {
+    "node": ">=22.5"
+  }
+}

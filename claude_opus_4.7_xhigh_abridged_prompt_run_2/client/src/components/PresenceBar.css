@@ -1,0 +1,47 @@
+.presence-bar {
+  border-bottom: 1px solid var(--border-soft);
+  background: rgba(7, 7, 15, 0.35);
+  backdrop-filter: blur(10px);
+}
+
+.presence-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.presence-avatars {
+  display: flex;
+  align-items: center;
+}
+.presence-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  color: #0a0a12;
+  font-weight: 700;
+  font-size: 0.68rem;
+  margin-left: -6px;
+  border: 2px solid #0b0b16;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.presence-avatar:first-child {
+  margin-left: 0;
+}
+.presence-avatar.overflow {
+  background: var(--surface-3);
+  color: var(--text-secondary);
+}
+
+.presence-names {
+  margin-left: auto;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

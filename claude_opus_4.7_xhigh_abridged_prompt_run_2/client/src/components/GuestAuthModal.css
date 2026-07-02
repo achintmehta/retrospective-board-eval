@@ -1,0 +1,71 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 3, 8, 0.72);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  padding: 20px;
+}
+
+.modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  padding: 32px 32px 24px;
+  background: linear-gradient(180deg, rgba(20, 20, 38, 0.98), rgba(15, 15, 30, 0.98));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(124, 92, 255, 0.25);
+  overflow: hidden;
+}
+
+.modal-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(300px 200px at 15% 0%, rgba(124, 92, 255, 0.4), transparent 60%),
+    radial-gradient(280px 200px at 100% 30%, rgba(34, 211, 238, 0.28), transparent 60%);
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.modal-card > *:not(.modal-glow) { position: relative; z-index: 1; }
+
+.modal-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  color: #86efac;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 16px;
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.8rem;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+.modal-sub {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+}
+.modal-footnote {
+  margin-top: 16px;
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+}

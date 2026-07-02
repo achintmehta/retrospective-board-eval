@@ -1,0 +1,35 @@
+{
+  "name": "retro-board",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Real-time retrospective board — self-hosted, single container.",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n server,client -c cyan,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "cross-env NODE_ENV=development tsx watch server/src/index.ts",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "npm --prefix client run build",
+    "build:server": "tsc -p server/tsconfig.json",
+    "start": "node server/dist/index.js",
+    "install:all": "npm install && npm --prefix client install"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "nanoid": "^5.0.7",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=22.15.0"
+  }
+}

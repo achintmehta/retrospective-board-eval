@@ -1,0 +1,30 @@
+{
+  "name": "retro-board",
+  "version": "1.0.0",
+  "description": "Real-time retrospective board with Node.js, React, and SQLite",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n server,client -c cyan,magenta \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "nodemon --watch server server/index.js",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "start": "node server/index.js",
+    "install:all": "npm install && npm --prefix client install"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "nanoid": "^5.0.9",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "nodemon": "^3.1.7",
+    "socket.io-client": "^4.8.3"
+  }
+}

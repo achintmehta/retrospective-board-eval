@@ -1,0 +1,55 @@
+.connection-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--border-mid);
+  background: var(--surface-1);
+  color: var(--text-secondary);
+  transition: background 200ms, color 200ms, border-color 200ms;
+}
+.connection-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--text-tertiary);
+}
+
+.connection-pill.status-connected {
+  color: #86efac;
+  border-color: rgba(52, 211, 153, 0.3);
+  background: rgba(52, 211, 153, 0.06);
+}
+.status-connected .connection-dot {
+  background: #34d399;
+  animation: pulse 1.8s infinite;
+}
+
+.connection-pill.status-connecting,
+.connection-pill.status-reconnecting {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+  background: rgba(251, 191, 36, 0.06);
+}
+.status-connecting .connection-dot,
+.status-reconnecting .connection-dot {
+  background: #fbbf24;
+  animation: pulse-warn 1.2s infinite;
+}
+@keyframes pulse-warn {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.connection-pill.status-error {
+  color: #fecaca;
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+}
+.status-error .connection-dot {
+  background: #ef4444;
+}

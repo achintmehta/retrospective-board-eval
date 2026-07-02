@@ -1,0 +1,15 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.git
+.gitignore
+Dockerfile
+.dockerignore
+*.sqlite
+data
+openspec
+images
+CLAUDE.md
+README.md
+.vite

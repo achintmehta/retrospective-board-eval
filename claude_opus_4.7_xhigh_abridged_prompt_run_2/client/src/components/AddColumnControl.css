@@ -1,0 +1,62 @@
+.add-column-empty {
+  width: 260px;
+  min-width: 260px;
+  min-height: 160px;
+  padding: 32px 20px;
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--border-mid);
+  background: rgba(255, 255, 255, 0.015);
+  color: var(--text-tertiary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 220ms var(--ease-standard);
+  scroll-snap-align: start;
+}
+.add-column-empty:hover {
+  border-color: rgba(124, 92, 255, 0.55);
+  background: rgba(124, 92, 255, 0.05);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.add-column-plus {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--grad-primary-soft);
+  border: 1px solid rgba(124, 92, 255, 0.4);
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  transition: transform 260ms var(--ease-emphasized);
+}
+.add-column-empty:hover .add-column-plus {
+  transform: rotate(90deg) scale(1.05);
+}
+
+.add-column-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.add-column-open {
+  width: 260px;
+  min-width: 260px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-strong);
+  background: linear-gradient(180deg, rgba(20, 20, 38, 0.95), rgba(15, 15, 30, 0.95));
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.add-column-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

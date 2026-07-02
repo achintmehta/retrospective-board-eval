@@ -1,0 +1,85 @@
+.board-shell {
+  overflow-x: hidden;
+}
+
+.board-title-crumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+  gap: 2px;
+}
+.board-title-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Board main area */
+.board-main {
+  flex: 1;
+  padding: 24px 0 40px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.columns-scroll {
+  overflow-x: auto;
+  padding: 4px 32px 24px;
+  scroll-snap-type: x proximity;
+}
+
+.columns-strip {
+  display: flex;
+  gap: 20px;
+  min-height: 0;
+  align-items: flex-start;
+}
+
+/* Loading orb animation */
+.board-loading {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 80px 20px;
+}
+.board-loading-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.orbiter {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+.orbiter span {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  border-top-color: var(--accent-1);
+  animation: orbit 1.2s linear infinite;
+}
+.orbiter span:nth-child(2) {
+  border-top-color: var(--accent-2);
+  animation-duration: 1.8s;
+  inset: 8px;
+}
+.orbiter span:nth-child(3) {
+  border-top-color: var(--accent-3);
+  animation-duration: 2.4s;
+  inset: 16px;
+}
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
