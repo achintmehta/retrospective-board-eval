@@ -1,0 +1,15 @@
+node_modules
+client/node_modules
+client/dist
+data
+*.sqlite
+*.sqlite-journal
+.git
+.gitignore
+openspec
+docs
+CLAUDE.md
+images
+Dockerfile
+.dockerignore
+README.md

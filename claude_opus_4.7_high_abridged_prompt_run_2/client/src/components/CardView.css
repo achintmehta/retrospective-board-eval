@@ -1,0 +1,113 @@
+.card {
+  position: relative;
+  padding: 0.9rem 0.95rem 0.7rem;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--border);
+  cursor: grab;
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease),
+    border-color 180ms var(--ease-swift), background 180ms var(--ease-swift);
+  animation: pop-in 220ms var(--ease) both;
+  user-select: none;
+  touch-action: none;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.065);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.card.is-dragging {
+  opacity: 0.35;
+}
+
+.card.is-overlay {
+  cursor: grabbing;
+  border-color: rgba(124, 92, 255, 0.5);
+  background: rgba(124, 92, 255, 0.08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(124, 92, 255, 0.4);
+  transform: rotate(-1.5deg);
+}
+
+.card-content {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 0.75rem;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.card-author {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.card-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card-author-name {
+  color: var(--text-muted);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+.card-time {
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.card-comments-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: color 180ms var(--ease-swift), background 180ms var(--ease-swift),
+    border-color 180ms var(--ease-swift);
+}
+.card-comments-btn:hover {
+  color: var(--text);
+  background: rgba(124, 92, 255, 0.15);
+  border-color: rgba(124, 92, 255, 0.4);
+}
+
+.card-comments-count {
+  font-variant-numeric: tabular-nums;
+}

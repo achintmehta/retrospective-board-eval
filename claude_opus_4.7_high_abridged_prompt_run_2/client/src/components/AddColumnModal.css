@@ -1,0 +1,42 @@
+.add-column-modal .modal-header {
+  text-align: left;
+  margin-bottom: 1.2rem;
+}
+.add-column-modal .modal-header .modal-title {
+  font-size: 1.35rem;
+}
+
+.add-column-colors {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+
+.add-column-swatch {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 180ms var(--ease), border-color 180ms var(--ease-swift),
+    box-shadow 180ms var(--ease);
+  padding: 0;
+}
+.add-column-swatch:hover {
+  transform: translateY(-2px);
+}
+.add-column-swatch.is-active {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+}
+
+.add-column-actions {
+  display: flex;
+  gap: 0.55rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+.add-column-actions .btn {
+  padding: 0.6rem 1rem !important;
+}

@@ -1,0 +1,122 @@
+.board-page {
+  padding: 1.4rem 1.6rem 3rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  animation: fade-in 300ms var(--ease) both;
+}
+
+/* ---------- Header ---------- */
+.board-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 1.2rem 1.4rem;
+  border-radius: var(--radius-lg);
+  background: var(--gradient-glass);
+  border: 1px solid var(--border);
+  margin-bottom: 1.8rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.board-header-main {
+  min-width: 0;
+}
+
+.board-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.board-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.board-connect-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #34d399;
+  box-shadow: 0 0 10px #34d399;
+}
+.board-connect-dot.is-dead {
+  background: #f87171;
+  box-shadow: 0 0 10px #f87171;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.board-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* ---------- Columns row ---------- */
+.board-columns {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(300px, 340px);
+  gap: 1.15rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scroll-snap-type: x proximity;
+}
+
+.board-columns > * {
+  scroll-snap-align: start;
+}
+
+/* ---------- Loading / error ---------- */
+.board-loading,
+.board-error {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  min-height: 60vh;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+.board-error h2 {
+  font-family: var(--font-display);
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+.board-loading-spinner {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--accent);
+  animation: spin 800ms linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 720px) {
+  .board-header {
+    flex-direction: column;
+  }
+  .board-header-actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}

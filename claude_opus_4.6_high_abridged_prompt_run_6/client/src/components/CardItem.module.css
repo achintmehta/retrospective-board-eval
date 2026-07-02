@@ -1,0 +1,62 @@
+.card {
+  display: flex;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.card:hover {
+  border-color: rgba(108, 92, 231, 0.4);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.dragging {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+  transform: rotate(2deg) scale(1.02);
+}
+
+.colorBar {
+  width: 4px;
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.content {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  word-wrap: break-word;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.author {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.commentCount {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

@@ -1,0 +1,114 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.backBtn {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+}
+
+.backBtn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.headerCenter {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.boardTitle {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.guestBadge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--accent-glow);
+  color: var(--accent-hover);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.exportBtn {
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+}
+
+.exportBtn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.columnsContainer {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  flex: 1;
+  overflow-x: auto;
+  align-items: flex-start;
+}
+
+.addColumnForm {
+  flex-shrink: 0;
+  width: 280px;
+}
+
+.addColumnInput {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border: 2px dashed var(--border);
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addColumnInput:focus {
+  border-style: solid;
+  border-color: var(--border-focus);
+  color: var(--text-primary);
+  text-align: left;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 16px;
+  color: var(--text-muted);
+  animation: pulse 1.5s infinite;
+}
