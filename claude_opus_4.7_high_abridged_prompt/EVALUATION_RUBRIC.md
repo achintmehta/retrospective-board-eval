@@ -1,6 +1,6 @@
 # Implementation Rubric: Realtime Retrospective Board
 
-Model Name: Opus 4.7
+Model Name: Claude Opus 4.7
 Agent: Claude Code
 Effort Mode: High
 UI testing model/tool: None

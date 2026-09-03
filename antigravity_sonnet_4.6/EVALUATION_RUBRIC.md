@@ -2,7 +2,7 @@
 
 Model Name: Claude Sonnet 4.6
 Agent: Antigravity
-UI testing model: GPT-OSS 120B
+UI testing model/tool: GPT-OSS 120B
 UI testing functionality invoked: Yes (Invoked alternate UI testing funcitonality instead of Playwright)
 
 Use this rubric to evaluate the quality and completeness of the retrospective board implementation.

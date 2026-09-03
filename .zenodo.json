@@ -1,10 +1,10 @@
 {
   "title": "Realtime Retrospective Board: AI Model Benchmark Dataset and Evaluation Artifacts",
-  "description": "Dataset, scoring rubric, and implementation artifacts from an observational study of 90 agentic code-generation runs implementing a standardized real-time retrospective board application, evaluated across multiple language-model variants, scaffold configurations, effort modes, and tool-access conditions. Each run is scored against a 14-criterion functional rubric on a 3/2/1 scale (42-point maximum); per-run scores are recorded in the EVALUATION_RUBRIC.md files. See CHANGELOG.md for version history and methodology notes.",
+  "description": "Dataset, scoring rubric, implementation artifacts and analysis code from a matched, replicated comparison of 90 agentic code-generation runs implementing a standardized real-time retrospective board application, evaluated across model generations (Claude Opus 4.7, Opus 4.6, Sonnet 4.6, Gemini 3.1, Qwen), two agent harnesses (Claude Code CLI and Antigravity), reasoning-effort levels, a visual automation and testing tool (the Playwright MCP server), and a design-oriented prompt condition, with repeated runs of identical configurations. The prompt condition compares a third-party agent's system prompt, which is not included in this archive, against a one-paragraph paraphrase of its design directive written for the study, which is. Each run is scored against a 14-criterion functional rubric on a 3/2/1 scale (42-point maximum); per-run scores and the harness's end-of-session cost, time and token report are recorded in the EVALUATION_RUBRIC.md files, and every run's source, screenshots and specification are included. The analysis/ folder contains the scripts that recompute every statistic in the accompanying paper from these files, rebuild the supplemental tables, regenerate the figures, and measure the design treatment in each run's shipped source, together with the per-run visual ratings and the rating instrument. See CHANGELOG.md for version history and methodology notes.",
   "upload_type": "dataset",
   "access_right": "open",
   "license": "MIT",
-  "version": "v2.3.0",
+  "version": "v2.4.0",
   "creators": [
     {
       "name": "Mehta, Achint"
@@ -16,7 +16,9 @@
     "agentic AI",
     "benchmark",
     "software engineering",
-    "reproducibility"
+    "reproducibility",
+    "reasoning effort",
+    "prompt engineering"
   ],
-  "notes": "Version history and a description of the scoring-instrument finalization (14-criterion / 42-point rubric, applied uniformly across all runs) are documented in CHANGELOG.md."
+  "notes": "Version history, the scoring-instrument finalization (14-criterion / 42-point rubric applied uniformly to all runs) and the corrections made to earlier release notes are documented in CHANGELOG.md. The accompanying paper has been submitted to PeerJ Computer Science; the third-party Antigravity system prompt used in the full design-prompt condition is not redistributed (it is excluded from every run folder and from the release archive), and only the abridged paraphrase written for the study is published, in analysis/abridged_design_prompt.md."
 }

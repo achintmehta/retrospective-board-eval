@@ -2,7 +2,7 @@
 
 Model Name: Claude Opus 4.6
 Agent: Antigravity
-UI testing model/tool: GPT-OSS_120B 
+UI testing model/tool: GPT-OSS 120B 
 UI testing functionality invoked: Yes
 
 Use this rubric to evaluate the quality and completeness of the retrospective board implementation.

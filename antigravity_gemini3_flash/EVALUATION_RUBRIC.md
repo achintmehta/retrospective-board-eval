@@ -2,7 +2,7 @@
 
 Model Name: Gemini 3.1 Flash
 Agent: Antigravity
-UI testing model: GPT-OSS 120B
+UI testing model/tool: GPT-OSS 120B
 UI testing functionality invoked: No
 
 Use this rubric to evaluate the quality and completeness of the retrospective board implementation.
