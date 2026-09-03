@@ -7,10 +7,14 @@ Usage:
 Paths resolve relative to this script, so it can be run from anywhere. It reads
 every <run_folder>/EVALUATION_RUBRIC.md, parses each run's config, 14 criterion
 ratings, total, and session cost, and writes index.html (the interactive report).
-Aesthetic ratings (1-5, screenshot review) for the rated runs are in AEST below.
+The holistic visual ratings (1-5) come from analysis/aesthetic_ratings.csv and the
+source-based design-treatment measures from analysis/design_markers.csv (produced by
+analysis/count_design_markers.py); both are optional, and the report degrades
+gracefully without them.
 """
-import os, glob, re, statistics as st
+import os, glob, re, csv, statistics as st
 BASE = os.path.dirname(os.path.abspath(__file__))
+VERSION = "v2.4.0"
 
 # ---- parse all rubrics ----
 runs = []
@@ -19,9 +23,11 @@ for f in sorted(glob.glob(BASE + "/*/EVALUATION_RUBRIC.md")):
     if d == "template_directory":
         continue
     txt = open(f, encoding="utf-8", errors="replace").read()
-    def hv(k):
-        m = re.search(r'^%s[ \t]*(.*)$' % re.escape(k), txt, re.M)
-        return m.group(1).strip() if m else ""
+    def hv(*keys):
+        for k in keys:
+            m = re.search(r'^%s[ \t]*(.*)$' % re.escape(k), txt, re.M)
+            if m: return m.group(1).strip()
+        return ""
     crit = []
     for line in txt.splitlines():
         if re.match(r'^\|\s*\*\*(\d+)\*\*\s*\|', line):
@@ -30,32 +36,27 @@ for f in sorted(glob.glob(BASE + "/*/EVALUATION_RUBRIC.md")):
             crit.append(int(rr) if rr else None)
     tot = re.search(r'Total Score:\*\*\s*(\d+)/42', txt)
     cost = re.findall(r'Total cost:\s*\$([0-9]+\.[0-9]+)', txt)
+    dl = d.lower()
     runs.append(dict(folder=d, model=hv("Model Name:"), agent=hv("Agent:"),
-        effort=hv("Effort Mode:"), tool=hv("UI testing model/tool:"),
-        prompt="Yes" if "antigravity" in d.lower() else "No",
+        effort=hv("Effort Mode:"), tool=hv("UI testing model/tool:", "UI testing model:", "UI testing tool:"),
+        # "Yes" only for Claude Code runs given the full third-party prompt (*_with_antigravity_prompt*);
+        # the Antigravity-harness runs (antigravity_*) are a separate condition, flagged by agent below.
+        prompt="Yes" if "antigravity_prompt" in dl else ("Abridged" if "abridged" in dl else "No"),
         total=int(tot.group(1)) if tot else None,
         cost=float(cost[-1]) if cost else None, crit=crit))
 
-# ---- aesthetic ratings (1-5), screenshot review ----
-AEST = {
- "claude_opus_4.6_high_with_antigravity_prompt_run_2":4,"claude_opus_4.6_high_with_antigravity_prompt_run_3":4,
- "claude_opus_4.6_high_with_antigravity_prompt_run_4":4,"claude_opus_4.6_high_with_antigravity_prompt_run_5":5,
- "claude_opus_4.6_high_with_antigravity_prompt_run_6":4,
- "claude_opus_4.7_high_with_antigravity_prompt_run_4":4,"claude_opus_4.7_high_with_antigravity_prompt_run_5":5,
- "claude_opus_4.7_high_with_antigravity_prompt_run_6":5,
- "claude_opus_4.7_xhigh_with_antigravity_prompt_run_2":5,"claude_opus_4.7_xhigh_with_antigravity_prompt_run_3":5,
- "claude_opus_4.7_xhigh_with_antigravity_prompt_run_4":5,"claude_opus_4.7_xhigh_with_antigravity_prompt_run_5":4,
- "claude_opus_4.7_xhigh_with_antigravity_prompt_run_6":5,
- "claude_opus_4.7_high_run_4":3,"claude_opus_4.7_high_run_5":3,"claude_opus_4.7_high_run_6":3,
- "claude_opus_4.7_xhigh_run_2":3,"claude_opus_4.7_xhigh_run_3":3,"claude_opus_4.7_xhigh_run_4":3,
- "claude_opus_4.7_xhigh_run_5":3,"claude_opus_4.7_xhigh_run_6":3,
- "claude_opus_4.7_with_playwright_high_run_2":3,"claude_opus_4.7_with_playwright_high_run_3":3,
- "claude_opus_4.7_with_playwright_high_run_4":3,"claude_opus_4.7_with_playwright_high_run_5":3,
- "claude_opus_4.7_with_playwright_high_run_6":3,
- "claude_opus_4.7_with_playwright_xhigh_run_2":3,"claude_opus_4.7_with_playwright_xhigh_run_3":3,
- "claude_opus_4.7_with_playwright_xhigh_run_4":3,"claude_opus_4.7_with_playwright_xhigh_run_5":3,
- "claude_opus_4.7_with_playwright_xhigh_run_6":3,
-}
+# ---- holistic visual ratings (1-5) and source-based design markers, from analysis/ ----
+AEST = {}
+_rat = os.path.join(BASE, "analysis", "aesthetic_ratings.csv")
+if os.path.exists(_rat):
+    with open(_rat, newline="", encoding="utf-8") as fh:
+        for i, row in enumerate(csv.reader(fh)):
+            if i and row: AEST[row[0].strip()] = int(row[1])
+MARK = {}
+_mk = os.path.join(BASE, "analysis", "design_markers.csv")
+if os.path.exists(_mk):
+    with open(_mk, newline="", encoding="utf-8") as fh:
+        for row in csv.DictReader(fh): MARK[row["run"]] = row
 CRIT_FULL = [
  ("Local Dev Environment","Does the local development environment come up without manual code changes?"),
  ("Docker Deployment","Does the Docker image build and run without errors?"),
@@ -99,22 +100,24 @@ for r in runs:
     r["dash"],r["board"]=imgpaths(r["folder"]); r["aest"]=AEST.get(r["folder"]); r["mshort"]=shortmodel(r["model"])
 
 N=len(runs); perfect=sum(1 for r in runs if r["total"]==42)
-fam_order=["Claude Opus 4.7","Claude Opus 4.6","Claude Sonnet 4.6","Gemini","Qwen"]
+fam_order=["Claude Opus 4.7","Claude Opus 4.6","Claude Sonnet 4.6","Gemini 3.1","Qwen"]
 def famkey(m):
     if "Opus 4.7" in m: return "Claude Opus 4.7"
     if "Opus 4.6" in m: return "Claude Opus 4.6"
     if "Sonnet 4.6" in m: return "Claude Sonnet 4.6"
-    if "Gemini" in m: return "Gemini"
+    if "Gemini" in m: return "Gemini 3.1"
     if "Qwen" in m: return "Qwen"
     return m
 fams={}
 for r in runs: fams.setdefault(famkey(r["model"]),[]).append(r)
 def sweepcell(eff,kind):
-    if kind=="base": return [r for r in runs if "Opus 4.7" in r["model"] and r["effort"]==eff and "Playwright" not in r["tool"] and r["prompt"]=="No"]
-    if kind=="PW": return [r for r in runs if "Opus 4.7" in r["model"] and r["effort"]==eff and "Playwright" in r["tool"] and r["prompt"]=="No"]
-    return [r for r in runs if "Opus 4.7" in r["model"] and r["effort"]==eff and r["prompt"]=="Yes"]
-sweep=[("High","base","High · base"),("High","PW","High · +Playwright"),("High","P","High · +design prompt"),
-       ("xHigh","base","xHigh · base"),("xHigh","PW","xHigh · +Playwright"),("xHigh","P","xHigh · +design prompt")]
+    o=[r for r in runs if "Opus 4.7" in r["model"] and r["effort"]==eff]
+    if kind=="base": return [r for r in o if "Playwright" not in r["tool"] and r["prompt"]=="No"]
+    if kind=="PW": return [r for r in o if "Playwright" in r["tool"] and r["prompt"]=="No"]
+    if kind=="A": return [r for r in o if r["prompt"]=="Abridged"]
+    return [r for r in o if r["prompt"]=="Yes"]
+sweep=[("High","base","High · base"),("High","PW","High · +Playwright"),("High","P","High · +full design prompt"),("High","A","High · +abridged design prompt"),
+       ("xHigh","base","xHigh · base"),("xHigh","PW","xHigh · +Playwright"),("xHigh","P","xHigh · +full design prompt"),("xHigh","A","xHigh · +abridged design prompt")]
 
 CSS = r"""
 :root{--bg:#f5f4f1;--surface:#fff;--surface-2:#f9f8f6;--surface-3:#efede8;--border:rgba(0,0,0,.08);
@@ -204,6 +207,7 @@ for r in ranked:
     b.append(f'<span class="badge b-eff">{r["effort"] or "—"}</span>')
     if "Playwright" in r["tool"]: b.append('<span class="badge b-tool">Playwright</span>')
     if r["prompt"]=="Yes": b.append('<span class="badge b-prompt">Design prompt</span>')
+    if r["prompt"]=="Abridged": b.append('<span class="badge b-prompt">Abridged design prompt</span>')
     cost=f'${r["cost"]:.2f}' if r["cost"] else '—'
     aest=f'<span class="stars">{stars(r["aest"])}</span>' if r["aest"] else ''
     cards.append(f'<div class="card" data-title="{r["mshort"]}" data-sub="{r["folder"]}" data-dash="{r["dash"]}" data-board="{r["board"]}">'
@@ -228,13 +232,35 @@ for eff,kind,label in sweep:
               f'<td class="num">${st.median(cs):.2f}</td><td class="num">{(sum(ae)/len(ae)):.1f}</td></tr>')
 
 fam=[]
-for k in fam_order:
-    rs=fams.get(k,[])
-    if not rs: continue
-    sc=[r["total"] for r in rs if r["total"]]; cs=[r["cost"] for r in rs if r["cost"]]
-    crange=f'${min(cs):.2f}–{max(cs):.2f}' if cs else '—'
-    fam.append(f'<tr><td><b>{k}</b></td><td class="num">{len(rs)}</td><td class="num">{st.mean(sc):.1f}</td>'
-               f'<td class="num">{min(sc)}–{max(sc)}</td><td class="num">{crange}</td></tr>')
+for harness in ("Claude Code","Antigravity"):
+    for k in fam_order:
+        rs=[r for r in fams.get(k,[]) if (r["agent"]=="Antigravity")==(harness=="Antigravity")]
+        if not rs: continue
+        sc=[r["total"] for r in rs if r["total"]]; cs=[r["cost"] for r in rs if r["cost"]]
+        crange=f'${min(cs):.2f}–{max(cs):.2f}' if cs else 'not recorded'
+        rng=f'{min(sc)}–{max(sc)}' if min(sc)!=max(sc) else f'{sc[0]}'
+        fam.append(f'<tr><td>{harness}</td><td><b>{k}</b></td><td class="num">{len(rs)}</td><td class="num">{st.mean(sc):.1f}</td>'
+                   f'<td class="num">{rng}</td><td class="num">{crange}</td></tr>')
+
+# ---- design treatment summary (visual ratings by condition; source markers if available)
+def cond_of(r):
+    if r["agent"]=="Antigravity": return "antigravity"
+    return {"Yes":"full","Abridged":"abridged"}.get(r["prompt"],"none")
+grp={"none":[], "full":[], "abridged":[], "antigravity":[]}
+for r in runs: grp[cond_of(r)].append(r)
+def rated(rs, lo, hi): return sum(1 for r in rs if r["folder"] in AEST and lo<=AEST[r["folder"]]<=hi)
+def marked(rs, key): return sum(1 for r in rs if r["folder"] in MARK and int(MARK[r["folder"]][key])>0)
+def medmark(rs, key):
+    v=[int(MARK[r["folder"]][key]) for r in rs if r["folder"] in MARK]; return st.median(v) if v else None
+n_none,n_full,n_abr=len(grp["none"]),len(grp["full"]),len(grp["abridged"])
+design_rows=""
+if MARK:
+    for key,label in [("gradient","CSS gradient"),("keyframes","Keyframe animation"),("google_font","Google Fonts import"),("display_font","Named display font")]:
+        design_rows+=f'<tr><td>{label} (runs with ≥ 1)</td><td class="num">{marked(grp["none"],key)} / {n_none}</td><td class="num">{marked(grp["full"],key)} / {n_full}</td><td class="num">{marked(grp["abridged"],key)} / {n_abr}</td></tr>'
+    for key,label in [("custom_props","CSS custom properties (median)"),("css_lines","CSS lines (median)"),("box_shadow","box-shadow rules (median)"),("transform","transform rules (median)")]:
+        design_rows+=f'<tr><td>{label}</td><td class="num">{medmark(grp["none"],key):.0f}</td><td class="num">{medmark(grp["full"],key):.0f}</td><td class="num">{medmark(grp["abridged"],key):.0f}</td></tr>'
+design_rows+=f'<tr><td>Holistic visual rating 4 or 5</td><td class="num">{rated(grp["none"],4,5)} / {n_none}</td><td class="num">{rated(grp["full"],4,5)} / {n_full}</td><td class="num">{rated(grp["abridged"],4,5)} / {n_abr}</td></tr>'
+design_rows+=f'<tr><td>Holistic visual rating 3 or below</td><td class="num">{rated(grp["none"],1,3)} / {n_none}</td><td class="num">{rated(grp["full"],1,3)} / {n_full}</td><td class="num">{rated(grp["abridged"],1,3)} / {n_abr}</td></tr>'
 
 costruns=sorted([r for r in runs if r["cost"] and r["cost"]<20],key=lambda r:r["cost"])
 maxc=max(r["cost"] for r in costruns)
@@ -247,6 +273,7 @@ for r in costruns:
 
 galf_design=["claude_opus_4.7_xhigh_with_antigravity_prompt_run_4","claude_opus_4.7_high_with_antigravity_prompt_run_5","claude_opus_4.6_high_with_antigravity_prompt_run_5"]
 galf_plain=["claude_opus_4.7_xhigh_run_3","claude_opus_4.7_with_playwright_high_run_3","claude_opus_4.7_high_run_6"]
+galf_abridged=["claude_opus_4.7_xhigh_abridged_prompt","claude_opus_4.7_high_abridged_prompt_run_2","claude_opus_4.6_high_abridged_prompt"]
 byf={r["folder"]:r for r in runs}
 def galtiles(folders):
     out=[]
@@ -256,43 +283,43 @@ def galtiles(folders):
         out.append(f'<div class="gal" data-title="{r["mshort"]}" data-sub="{r["folder"]}" data-dash="{r["dash"]}" data-board="{r["board"]}">'
                    f'<img src="{r["dash"]}" loading="lazy" alt=""><div class="gal-cap"><span>{r["mshort"]}</span><span class="stars">{stars(r["aest"])}</span></div></div>')
     return "".join(out)
-gal_design=galtiles(galf_design); gal_plain=galtiles(galf_plain)
+gal_design=galtiles(galf_design); gal_plain=galtiles(galf_plain); gal_abridged=galtiles(galf_abridged)
 
 HTML=f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Realtime Retro Board — 72-Run Model Benchmark</title>
+<title>Realtime Retro Board — {N}-Run Model Benchmark</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>{CSS}</style></head><body>
-<div class="hero"><div class="eyebrow">Observational Study · v2.1 · {N} Runs</div>
-<h1>One spec, <em>seventy-two</em> agentic builds of the same app</h1>
-<p class="hero-sub">Every run received the identical real-time retrospective-board specification, scored on a 14-criterion functional rubric (42-point scale) and reviewed for visual quality. The dataset spans model generations, agent harnesses, reasoning-effort levels, a screenshot-testing tool, and a design-oriented prompt — with replicate runs to quantify run-to-run variation.</p>
+<div class="hero"><div class="eyebrow">Matched, replicated comparison · {VERSION} · {N} Runs</div>
+<h1>One spec, <em>{N}</em> agentic builds of the same app</h1>
+<p class="hero-sub">Every run received the identical real-time retrospective-board specification, was scored on a 14-criterion functional rubric (42-point scale), and was characterised for visual design treatment. The dataset spans model generations, two agent harnesses, reasoning-effort levels, a visual automation and testing tool (the Playwright MCP server), and a design-oriented prompt condition (a third-party prompt, not redistributed, and a one-paragraph paraphrase of its design directive, which is) — with six or seven repeated runs of identical configurations to quantify run-to-run variation. Conditions were chosen rather than randomised.</p>
 <div class="hero-stats">
 <div><div class="stat-num">{N}</div><div class="stat-label">Graded runs</div></div>
-<div><div class="stat-num">{perfect}</div><div class="stat-label">Perfect 42/42</div></div>
+<div><div class="stat-num">{perfect}</div><div class="stat-label">Perfect 42/42 on the first try</div></div>
 <div><div class="stat-num">5</div><div class="stat-label">Model families</div></div>
 <div><div class="stat-num">/42</div><div class="stat-label">14 criteria × 3</div></div></div></div>
-<nav><a href="#overview">Overview</a><a href="#rubric">Rubric</a><a href="#sweep">Effort Sweep</a><a href="#rankings">All Runs</a><a href="#heatmap">Heatmap</a><a href="#findings">Findings</a><a href="#aesthetics">Aesthetics</a><a href="#costs">Cost</a><a href="#recs">Recommendations</a></nav>
+<nav><a href="#overview">Overview</a><a href="#rubric">Rubric</a><a href="#sweep">Effort Grid</a><a href="#rankings">All Runs</a><a href="#heatmap">Heatmap</a><a href="#findings">Findings</a><a href="#aesthetics">Design Treatment</a><a href="#costs">Cost</a><a href="#recs">Recommendations</a></nav>
 
 <section id="overview"><div class="section-eyebrow">The Task</div><h2>One spec, {N} runs</h2>
 <p class="section-desc">Each run built a self-hosted, real-time retrospective board (React/Vite + Node.js + Socket.io + SQLite) from the same OpenSpec. Requirements:</p>
 <ul class="req-list"><li>Board creation &amp; listing (SQLite)</li><li>Configurable columns</li><li>Guest auth (display name)</li><li>Drag-and-drop cards between columns</li><li>Nested comments</li><li>Real-time WebSocket sync</li><li>Single-container Docker</li><li>CSV export</li><li>Developer documentation</li></ul>
-<p class="section-desc" style="margin-top:18px">Claude Code runs were produced with <b>Claude Code v2.1.132</b>, using the <code>/opsx:apply</code> command to have the agent implement the OpenSpec specification.</p>
-<table style="margin-top:24px"><thead><tr><th>Model family</th><th class="num">Runs</th><th class="num">Mean</th><th class="num">Range</th><th class="num">Cost</th></tr></thead><tbody>{"".join(fam)}</tbody></table>
-<p class="section-desc" style="margin-top:14px;font-size:.85rem">Qwen ran locally at no inference charge; its dollar figures are Claude-orchestration overhead only.</p></section>
+<p class="section-desc" style="margin-top:18px">Claude Code runs were produced with <b>Claude Code CLI v2.1.132</b>, using the <code>/opsx:apply</code> command to have the agent implement the OpenSpec specification, zero shot. Antigravity runs used that agent's own harness and injected system prompt. The specification is identical in every run folder.</p>
+<table style="margin-top:24px"><thead><tr><th>Harness</th><th>Model family</th><th class="num">Runs</th><th class="num">Mean</th><th class="num">Range</th><th class="num">Cost</th></tr></thead><tbody>{"".join(fam)}</tbody></table>
+<p class="section-desc" style="margin-top:14px;font-size:.85rem">Cost is Claude Code's <code>/cost</code> estimate from token counts at per-token model prices. The two Qwen models ran locally, so their figures are token-volume estimates at the hosted-model rate under which the harness reported the usage, not prices paid. The Antigravity harness does not report session cost.</p></section>
 
 <section id="rubric"><div class="section-eyebrow">Scoring Instrument</div><h2>The 14-criterion rubric</h2>
 <p class="section-desc">Every run is scored on the same 14 functional criteria, each rated 3 / 2 / 1; the run's total is their sum (42 max). The numbered columns in the heatmap below correspond to these criteria.</p>
 <table><thead><tr><th class="num">#</th><th>Criterion</th><th>What it checks</th></tr></thead><tbody>{rubric_rows}</tbody></table>
 <div style="margin-top:26px;display:flex;gap:14px;flex-wrap:wrap">
 <div class="find-card" style="border-left-color:#2f9e6a;padding:14px 18px;max-width:320px"><b style="color:#2f9e6a">3 — Pass</b><p style="font-size:.86rem">Worked on the first try, no changes needed.</p></div>
-<div class="find-card" style="border-left-color:#d99022;padding:14px 18px;max-width:320px"><b style="color:#c97000">2 — Fixed</b><p style="font-size:.86rem">Failed initially, fixed after one prompt to the agent.</p></div>
+<div class="find-card" style="border-left-color:#d99022;padding:14px 18px;max-width:320px"><b style="color:#c97000">2 — Fixed</b><p style="font-size:.86rem">Failed initially, fixed after one corrective prompt that described only the observed error.</p></div>
 <div class="find-card" style="border-left-color:#c23b2a;padding:14px 18px;max-width:320px"><b style="color:#c23b2a">1 — Failed</b><p style="font-size:.86rem">Never fully worked despite prompting.</p></div>
 </div></section>
 
-<section id="sweep"><div class="section-eyebrow">Opus 4.7 Effort Sweep</div><h2>Effort buys what the tool didn't</h2>
-<p class="section-desc">A 2 × 3 design — High/xHigh effort across base, +Playwright, and +design-prompt conditions, six replicates per cell. Raising effort from High to xHigh moves first-try-perfect from 28% to 89%; the screenshot tool moves cost, not score; the design prompt moves aesthetics, not score.</p>
-<table><thead><tr><th>Cell</th><th class="num">Mean score</th><th class="num">First-try 42/42</th><th class="num">Cost (median)</th><th class="num">Aesthetics /5</th></tr></thead><tbody>{"".join(sw)}</tbody></table></section>
+<section id="sweep"><div class="section-eyebrow">Opus 4.7 Effort Grid</div><h2>Effort buys what the tool didn't</h2>
+<p class="section-desc">A 2 × 4 design — High/xHigh effort across base, +Playwright, +full design prompt and +abridged design prompt, six replicates per cell. The abridged cells were added later as an ablation and are kept out of the pooled effort contrast. Pooling the six sweep cells, raising effort from High to xHigh moves first-try-perfect from 28% (5 of 18) to 89% (16 of 18); the testing tool moves cost, not score; either design prompt changes what is built and costs first-try reliability, not the total.</p>
+<table><thead><tr><th>Cell</th><th class="num">Mean score</th><th class="num">First-try 42/42</th><th class="num">Cost (median)</th><th class="num">Visual rating /5</th></tr></thead><tbody>{"".join(sw)}</tbody></table></section>
 
 <section id="rankings"><div class="section-eyebrow">Score Rankings</div><h2>All {N} runs</h2>
 <p class="section-desc">Sorted by total score, then cost. Click any card for its screenshots. Repeated configurations appear multiple times by design — that spread is the point.</p>
@@ -304,33 +331,37 @@ HTML=f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 
 <section id="findings"><div class="section-eyebrow">Key Findings</div><h2>What the data shows</h2>
 <div class="find">
-<div class="find-card"><h3>Capability tier dominates</h3><p>Frontier models cluster near the 42 ceiling (family means ≈ 41); the cheap local model collapses to <span class="kpi">24–37</span> at 20–90× the orchestration cost. The tier gap dwarfs anything tools, prompt, or effort do within a tier (≤ 1–2 points).</p></div>
-<div class="find-card"><h3>The tool adds cost, not reliability</h3><p>Playwright on vs off leaves functional score flat while raising cost <span class="kpi">+42–68%</span>. Playwright-High runs still failed on Docker — a fault a screenshot can't see.</p></div>
-<div class="find-card"><h3>Effort buys first-try reliability</h3><p>Opus 4.7 High→xHigh: first-try-perfect rises <span class="kpi">28% → 89%</span> for ~10–30% more cost. The reliability the tool didn't deliver, effort did.</p></div>
-<div class="find-card"><h3>Design prompt lifts aesthetics, not function</h3><p>Functional score unchanged; visual rating <span class="kpi">4.5 vs 3.0</span> (prompt vs none), independent of effort and tool.</p></div>
-<div class="find-card"><h3>Variability is effort-sensitive</h3><p>At High, identical prompts scatter 39–42 (and 24–627 lines of CSS); xHigh compresses the functional scatter to a near-uniform 42.</p></div>
-<div class="find-card"><h3>Docker &amp; npm are the dominant failures</h3><p><code>better-sqlite3</code> native builds and the Express 5 wildcard break most first-run containers. Capability and effort catch them; the tool doesn't.</p></div>
+<div class="find-card"><h3>Capability tier dominates</h3><p>Frontier models cluster near the 42 ceiling (family means ≈ 41); the two local Qwen models score <span class="kpi">37 and 24</span>, with token-volume estimates twelve to fifty times the frontier median. The tier gap dwarfs anything tools, prompt, or effort do within a tier (≤ 1–2 points on the total).</p></div>
+<div class="find-card"><h3>Totals conceal first-try reliability</h3><p>Docker deployment failed first try in <span class="kpi">40 of 90</span> runs (44%). Its first-try pass rate rose from 19% on Opus 4.6 High to 75% on Opus 4.7 High while family means moved less than a point; local-environment failures moved the other way (1 of 26 → 10 of 24).</p></div>
+<div class="find-card"><h3>The tool adds cost, not reliability</h3><p>Playwright on vs off leaves the functional score flat while raising median cost <span class="kpi">+42% / +68%</span> (Opus 4.7 High / xHigh; +27% on Opus 4.6). Every tool-enabled run invoked it; the premium is context re-reading (cache-read tokens 2.3M → 5.3M–7.0M), and tool-enabled runs still failed on Docker builds.</p></div>
+<div class="find-card"><h3>Effort buys first-try reliability</h3><p>Opus 4.7 High→xHigh: first-try-perfect rises <span class="kpi">28% → 89%</span> (5 of 18 → 16 of 18), corrective prompts fall 16 → 3, for 9–29% more cost. The reliability the tool didn't deliver, effort did.</p></div>
+<div class="find-card"><h3>The design prompt changes what is built, not how well it works</h3><p>None of the {n_none} unprompted Claude Code runs shipped a gradient, a keyframe animation or an imported display font; all {n_full+n_abr} prompted runs shipped all of them, and every one was rated 4 or 5 against 3 for every unprompted run. Functional totals were unchanged, but first-try reliability fell, concentrated on drag-and-drop, and the cost persists at xHigh. A one-paragraph paraphrase reproduces the whole effect.</p></div>
+<div class="find-card"><h3>Variability is effort-sensitive</h3><p>Seven identical Opus 4.6 High base runs scatter 38–42 functionally and <span class="kpi">41–626</span> lines of CSS; on Opus 4.7 the structural spread narrows on its own while scores still scatter 39–42 at High, and xHigh compresses them to a uniform 42.</p></div>
+<div class="find-card"><h3>Docker &amp; npm are the dominant failures</h3><p><code>better-sqlite3</code> native builds in minimal containers and the Express 5 change that removed the <code>app.get('*')</code> wildcard break most first-run containers. Capability and effort catch them; a browser-testing tool doesn't.</p></div>
 </div></section>
 
-<section id="aesthetics"><div class="section-eyebrow">Visual Aesthetics</div><h2>The design prompt, not compute, drives polish</h2>
-<p class="section-desc">Dashboards rated 1–5. Across the 31 newly rated runs, the <b>13 design-prompt runs average 4.5/5</b> vs <b>3.0/5</b> for the 18 non-design runs — a lift independent of effort (xHigh base = 3/5, identical to High base) and tool. The two labeled groups below show the contrast: design-prompt builds (marketing heroes, gradient themes, color-coded columns) vs default builds (clean but plain).</p>
-<div class="gal-grouphead">With design prompt · avg 4.5 / 5</div>
+<section id="aesthetics"><div class="section-eyebrow">Design Treatment</div><h2>The design prompt, not compute, is what invokes design</h2>
+<p class="section-desc">Two independent measures over the {n_none+n_full+n_abr} Claude Code runs. The source-based measures count, in each run's shipped code, the features the design directive names and technique-agnostic styling effort (<code>analysis/design_markers.csv</code>, no judge involved). The holistic rating (1–5) was produced by a large language model from the archived dashboard screenshots, reviewed by the author, and not blinded to condition (<code>analysis/VISUAL_RATING_INSTRUMENT.md</code>). The two agree in every Claude Code run. Neither depends on effort or the testing tool: every base and +Playwright run at either effort level sits at 3.</p>
+<table><thead><tr><th>Measure</th><th class="num">No design prompt ({n_none})</th><th class="num">Full design prompt ({n_full})</th><th class="num">Abridged prompt ({n_abr})</th></tr></thead><tbody>{design_rows}</tbody></table>
+<div class="gal-grouphead" style="margin-top:30px">With the full design prompt</div>
 <div class="gallery">{gal_design}</div>
-<div class="gal-grouphead plain" style="margin-top:30px">No design prompt (default) · avg 3.0 / 5</div>
+<div class="gal-grouphead" style="margin-top:30px">With the abridged (one-paragraph) design prompt</div>
+<div class="gallery">{gal_abridged}</div>
+<div class="gal-grouphead plain" style="margin-top:30px">No design prompt (default)</div>
 <div class="gallery">{gal_plain}</div></section>
 
 <section id="costs"><div class="section-eyebrow">Cost Efficiency</div><h2>Score vs cost</h2>
-<p class="section-desc">Final session cost (USD) after all fixes, low to high; bar scaled to the most expensive Claude API run. The two off-scale Qwen runs (local models, orchestration overhead only) are omitted here.</p>
+<p class="section-desc">Final session cost (USD) after all fixes, low to high; bar scaled to the most expensive hosted-model run. The two off-scale Qwen runs (local models; their <code>/cost</code> figures are token-volume estimates, not prices) are omitted here, and the five Antigravity runs have no recorded cost.</p>
 <div class="bars">{"".join(bars)}</div></section>
 
 <section id="recs"><div class="section-eyebrow">Recommendations</div><h2>What to use</h2>
 <div class="find">
 <div class="find-card"><h3>For reliable first-shot results</h3><p>A frontier model at <b>higher effort</b> — effort, not a UI-testing tool, is what removes first-run failures.</p></div>
-<div class="find-card"><h3>Match resource to failure mode</h3><p>Don't add a screenshot tool expecting reliability; the dominant failures are build/environment issues it can't see. Spend on capability and effort.</p></div>
-<div class="find-card"><h3>Use the design prompt for polish only</h3><p>It adds cost and aesthetics, not correctness — invoke it when visual quality matters.</p></div>
+<div class="find-card"><h3>Match resource to failure mode</h3><p>Don't add a browser-testing tool expecting reliability; the dominant failures are build/environment faults it can't see. Spend on capability and effort, or on a tool aimed at the build.</p></div>
+<div class="find-card"><h3>Ask for visual quality explicitly</h3><p>A paragraph of project instructions is enough to invoke it — and budget for the small first-try-reliability price it carries in the most interaction-heavy features.</p></div>
 </div></section>
 
-<footer>Observational dataset · {N} runs · 14-criterion / 42-point rubric · MIT-licensed · archived on Zenodo (see README). Generated by gen_report.py from the per-run EVALUATION_RUBRIC.md files.</footer>
+<footer>Matched, replicated comparison · {N} runs · dataset {VERSION} · 14-criterion / 42-point rubric · MIT-licensed · archived on Zenodo (see README). Generated by gen_report.py from the per-run EVALUATION_RUBRIC.md files and the analysis/ folder.</footer>
 
 <div id="lightbox"><div id="lb-inner"><button id="lb-close">&#x2715;</button><div id="lb-title"></div><div id="lb-sub"></div>
 <div id="lb-imgs"><div><div style="font-family:var(--fm);font-size:.65rem;color:var(--muted);margin-bottom:6px">DASHBOARD</div><div id="lb-d"></div></div>

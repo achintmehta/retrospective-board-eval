@@ -6,12 +6,12 @@ Two families of measures are counted from every run's own front-end source (CSS/
 TSX/JSX/TS/JS/HTML, so CSS-in-JS and inline style objects are included; node_modules, dist, build,
 coverage, .git and .playwright-mcp are excluded):
 
-  Directive-named markers (what the design directive explicitly asks for):
+  Directive-named markers (what the design directive asks for; both of its forms, the design portion
+  of the full third-party prompt and the abridged paraphrase in abridged_design_prompt.md, ask for all four):
     gradient        CSS gradient functions (linear-, radial-, conic-gradient)
     keyframes       @keyframes animation definitions
     google_font     Google Fonts stylesheet/link imports, or a @fontsource dependency
     display_font    named modern display faces (Inter, Outfit, Poppins, Manrope, ...)
-    backdrop        backdrop-filter rules (CSS or camelCase inline)
 
   Technique-agnostic investment measures (not named in the directive):
     css_lines       lines in .css/.scss files
@@ -24,6 +24,11 @@ coverage, .git and .playwright-mcp are excluded):
     media_q         @media queries
     ui_framework    1 if a UI/styling framework is a package dependency (Tailwind, MUI, Chakra, Ant,
                     Bootstrap, styled-components, Emotion, Radix Themes), else 0
+
+  Also recorded, in the CSV and the supplemental per-run table only:
+    backdrop        backdrop-filter rule count (CSS or camelCase). Only the full prompt alludes to this
+                    effect, so it is neither a feature both forms of the directive name nor a technique
+                    the directive leaves unnamed; the manuscript table therefore omits it.
 
 A run is classed as "design-treated" if it has at least one gradient AND (a Google Font import OR a
 @keyframes block). The script also joins the holistic 1-5 visual rating from aesthetic_ratings.csv,
@@ -126,17 +131,17 @@ def measure(run_dir):
     return m
 
 TABLE_CAPTION = ("Design treatment in the shipped source, by condition. Counted from each run's own CSS, "
-    "TSX, JSX, TS, JS and HTML files (dependencies and build output excluded) by count_design_markers.py. "
-    "The first block lists features the design directive names, as the number of runs containing at least "
-    "one; a run is classed as design-treated if it contains a gradient and either a Google Fonts import or a "
-    "keyframe animation. The second block lists technique-agnostic measures of styling effort that the "
-    "directive does not name, as the median [minimum to maximum] per run. The last rows give the holistic "
-    "visual rating for comparison. Font sizes and weights count distinct literal values; dark colours are "
-    "distinct hex colours with relative luminance below 0.15. No run in any condition depends on a UI or "
-    "styling framework.")
+    "TSX, JSX, TS, JS and HTML files, excluding dependencies and build output, by the archived script "
+    "count_design_markers.py. The first block lists features the design directive names, as the number of "
+    "runs containing at least one; a run is classed as design-treated if it contains a gradient and either a "
+    "Google Fonts import or a keyframe animation. The second block lists technique-agnostic measures of "
+    "styling effort that the directive does not name, as the median [minimum to maximum] per run. The last "
+    "rows give the holistic visual rating for comparison. Font sizes and weights count distinct literal "
+    "values, and dark colours are distinct hex colours with relative luminance below 0.15. No run in any "
+    "condition depends on a UI or styling framework.")
 
 NAMED_LABELS = [("gradient", "CSS gradient"), ("keyframes", "Keyframe animation"), ("google_font", "Google Fonts import"),
-                ("display_font", "Named display font"), ("backdrop", "Backdrop filter"), ("design_treated", "Design-treated (rule above)")]
+                ("display_font", "Named display font"), ("design_treated", "Design-treated (rule above)")]
 INVEST_LABELS = [("css_lines", "CSS lines"), ("custom_props", "CSS custom properties (design tokens)"),
                  ("box_shadow", "box-shadow rules"), ("border_radius", "border-radius rules"), ("transform", "transform rules"),
                  ("letter_spacing", "letter-spacing rules"), ("font_weights", "Distinct font weights"),
@@ -245,18 +250,18 @@ def main():
         m = measure(os.path.dirname(f))
         rows.append({"run": d, "condition": condition(d), "holistic_rating": ratings.get(d, ""), **m})
     cols = ["run", "condition", "holistic_rating", "design_treated",
-            "gradient", "keyframes", "google_font", "display_font", "backdrop",
+            "gradient", "keyframes", "google_font", "display_font",
             "css_lines", "custom_props", "box_shadow", "border_radius", "transform", "letter_spacing",
-            "transition", "font_weights", "font_sizes", "colors", "dark_colors", "media_q", "ui_framework"]
+            "transition", "backdrop", "font_weights", "font_sizes", "colors", "dark_colors", "media_q", "ui_framework"]
     with open(OUT, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=cols); w.writeheader()
         for r in rows: w.writerow({c: r.get(c, "") for c in cols})
     print(f"runs: {len(rows)}  ->  {OUT}\n")
 
     conds = ["no design prompt", "full prompt", "abridged prompt", "antigravity harness"]
-    named = ["gradient", "keyframes", "google_font", "display_font", "backdrop"]
+    named = ["gradient", "keyframes", "google_font", "display_font"]
     invest = ["css_lines", "custom_props", "box_shadow", "border_radius", "transform",
-              "letter_spacing", "font_weights", "font_sizes", "dark_colors", "ui_framework"]
+              "letter_spacing", "transition", "backdrop", "font_weights", "font_sizes", "dark_colors", "ui_framework"]
     print("Directive-named markers: runs with >= 1 occurrence")
     print(f"{'marker':14s}" + "".join(f"{c:>22s}" for c in conds))
     for k in named + ["design_treated"]:

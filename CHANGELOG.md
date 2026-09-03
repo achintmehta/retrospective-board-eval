@@ -23,7 +23,7 @@ scripts refuse to run if any rubric's declared total differs from that sum.
   Tables 7 and 8).
 - `count_design_markers.py` measures the design treatment in each run's shipped source without a
   judge: features the design directive names (gradients, keyframe animations, Google Fonts
-  imports, named display faces, backdrop filters) and technique-agnostic styling-effort measures
+  imports, named display faces) and technique-agnostic styling-effort measures
   (CSS lines, custom properties, shadows, radii, transforms, letter-spacing, type scale, dark
   colours, UI-framework dependencies). Output: `design_markers.csv`, and with `--docx` a
   by-condition summary table and a per-run spreadsheet.

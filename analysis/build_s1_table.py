@@ -25,7 +25,8 @@ Notes on the labels:
     rubric records GPT-OSS 120B as the model it used for that). These are recorded as the rubric states
     them, with the underscore variant normalised, so the column means "UI testing model/tool as
     recorded in the rubric".
-  - Effort is left blank where the rubric records none (the Gemini 3.1 Flash run).
+  - Effort is left blank where neither the rubric nor the folder name records one (the Antigravity
+    Claude and Gemini Flash runs).
 """
 import os, re, csv, glob, math, sys, argparse
 
@@ -73,12 +74,17 @@ def field(txt, *labels):
     return ""
 
 def effort_from(folder, em):
+    """Effort as recorded in the rubric; otherwise from the folder name for Claude Code runs
+    (High unless the name says xHigh or Max). Antigravity runs record no effort setting except
+    the two Gemini 3.1 Pro runs, whose folder names carry the agent's high/low thinking level."""
     if em: return em
     f = folder.lower()
+    if f.startswith("antigravity"):
+        if "_high" in f: return "High"
+        if "_low" in f:  return "Low"
+        return ""
     if "xhigh" in f: return "xHigh"
     if "max" in f:   return "Max"
-    if "low" in f:   return "Low"
-    if "flash" in f: return ""
     return "High"
 
 def tool_from(raw):
