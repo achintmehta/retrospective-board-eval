@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-count_structure.py - structural metrics for Tables 7 and 8 of the manuscript.
+count_structure.py - structural metrics for Tables 8 and 9 of the manuscript.
 
-For each run directory given (or the Table 7/8 default sets), counts:
+For each run directory given (or the Table 8/9 default sets), counts:
   - source files: *.js, *.jsx, *.ts, *.tsx
   - total source lines: line count of those files
   - CSS lines: line count of *.css files
 excluding node_modules, dist, build, coverage, .git, package-lock.json, minified files and
-source maps. Reproduces the published Table 7 (seven Opus 4.6 High base runs) and Table 8
+source maps. Reproduces the published Table 8 (seven Opus 4.6 High base runs) and Table 9
 (six Opus 4.7 base runs at each effort level) exactly; the tables sort rows by CSS lines.
 
 Usage:   cd analysis && python3 count_structure.py [run_dir ...]
@@ -61,6 +61,6 @@ if __name__ == "__main__":
     if sys.argv[1:]:
         report("Requested runs", sys.argv[1:])
     else:
-        report("Table 7: Opus 4.6 High, base (sorted by CSS lines)", TABLE7)
-        report("Table 8: Opus 4.7 High, base (sorted by CSS lines)", TABLE8[:6])
-        report("Table 8: Opus 4.7 xHigh, base (sorted by CSS lines)", TABLE8[6:])
+        report("Table 8: Opus 4.6 High, base (sorted by CSS lines)", TABLE7)
+        report("Table 9: Opus 4.7 High, base (sorted by CSS lines)", TABLE8[:6])
+        report("Table 9: Opus 4.7 xHigh, base (sorted by CSS lines)", TABLE8[6:])

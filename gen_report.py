@@ -228,8 +228,9 @@ sw=[]
 for eff,kind,label in sweep:
     rs=sweepcell(eff,kind); sc=[r["total"] for r in rs if r["total"]]; cs=[r["cost"] for r in rs if r["cost"]]
     ae=[AEST[r["folder"]] for r in rs if r["folder"] in AEST]; perf=sum(1 for x in sc if x==42)
+    # the holistic rating is ordinal, so it is reported as the count of runs at 3 / 4 / 5, not a mean
     sw.append(f'<tr><td>{label}</td><td class="num">{st.mean(sc):.1f}</td><td class="num">{perf}/{len(sc)}</td>'
-              f'<td class="num">${st.median(cs):.2f}</td><td class="num">{(sum(ae)/len(ae)):.1f}</td></tr>')
+              f'<td class="num">${st.median(cs):.2f}</td><td class="num">{ae.count(3)} / {ae.count(4)} / {ae.count(5)}</td></tr>')
 
 fam=[]
 for harness in ("Claude Code","Antigravity"):
@@ -319,7 +320,7 @@ HTML=f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 
 <section id="sweep"><div class="section-eyebrow">Opus 4.7 Effort Grid</div><h2>Effort buys what the tool didn't</h2>
 <p class="section-desc">A 2 × 4 design — High/xHigh effort across base, +Playwright, +full design prompt and +abridged design prompt, six replicates per cell. The abridged cells were added later as an ablation and are kept out of the pooled effort contrast. Pooling the six sweep cells, raising effort from High to xHigh moves first-try-perfect from 28% (5 of 18) to 89% (16 of 18); the testing tool moves cost, not score; either design prompt changes what is built and costs first-try reliability, not the total.</p>
-<table><thead><tr><th>Cell</th><th class="num">Mean score</th><th class="num">First-try 42/42</th><th class="num">Cost (median)</th><th class="num">Visual rating /5</th></tr></thead><tbody>{"".join(sw)}</tbody></table></section>
+<table><thead><tr><th>Cell</th><th class="num">Mean score</th><th class="num">First-try 42/42</th><th class="num">Cost (median)</th><th class="num">Visual rating (runs at 3 / 4 / 5)</th></tr></thead><tbody>{"".join(sw)}</tbody></table></section>
 
 <section id="rankings"><div class="section-eyebrow">Score Rankings</div><h2>All {N} runs</h2>
 <p class="section-desc">Sorted by total score, then cost. Click any card for its screenshots. Repeated configurations appear multiple times by design — that spread is the point.</p>
