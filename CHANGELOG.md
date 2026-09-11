@@ -4,6 +4,58 @@ All notable changes to this dataset and its evaluation artifacts are documented 
 Scores are derived from the per-run `EVALUATION_RUBRIC.md` files; each run's total is the
 sum of its per-criterion ratings.
 
+## v2.5.0 — 2026-09-11
+
+This release addresses the PeerJ CS submission technical checks comments by restructuring the 
+documentation, splitting the screenshot figure, and archives the figure outputs.  The scoring
+instrument (14 criteria × 3 = 42 max) and the sample (90 runs) are unchanged. No criterion rating, 
+total cost or reported statistic was altered and each total still equals the sum of that run's 14
+ratings.
+
+### Documentation
+- `README.md` modified to the structure that PeerJ requires for code and data accompanying an AI
+  Application article: description, dataset information (the run-folder naming scheme and the
+  contents of every run folder and top-level file), code information, usage instructions,
+  requirements, methodology (task, conditions, rubric, data processing, evaluation method and
+  metrics), citations, and license and contribution guidelines. All previously documented
+  content is retained.
+- The paper's preprint (arXiv:2607.02436) is now cited in the README, in `CITATION.cff` and as a
+  related identifier in `.zenodo.json`.
+
+### Figures
+- `make_figures.py` contains `fig_conditions()`, which renders Figure 5 as four full-width panels
+  (Opus 4.7 at High effort under the base, Playwright, full design prompt and abridged design
+  prompt conditions), each showing the upper part of the run's dashboard screenshot so that the
+  interface text is legible; `CROP_TOP` controls the crop. The previous twelve-panel grid (three
+  Opus configurations by four conditions) is unchanged and is now written as `Figure_S1.png`,
+  the paper's Supplemental Figure S1. The runs shown are unchanged.
+- The rendered figures are now committed under `analysis/figs/` folder
+
+### Analysis code
+- `derive_manuscript_numbers.py`: the Table 2 block reports first-try passes on the local
+  development environment criterion; a design-treatment block reproduces the within-prompted
+  comparisons (runs rated 5 against runs rated 4 on each source-based measure, two-sided
+  Mann–Whitney U with tie and continuity corrections), the agreement counts between the rating
+  and the source-based classification, and the Spearman correlations between the rating and a
+  composite rank of eight source measures; a specification-identity block verifies by SHA-256
+  that every run folder holds byte-identical OpenSpec documents. `manuscript_numbers_derivation.md`
+  regenerated accordingly.
+- `count_structure.py` and `analysis/README.md`: the structure tables are Tables 8 and 9 in the
+  paper's current numbering (the v2.4.0 entry below refers to them as Tables 7 and 8, the
+  numbering at that time).
+- `make_figures.py`: figures restyled to the journal's requirements (panel letters, marker
+  shapes and hatching in addition to colour, no in-image titles, Figure 4 without the mean
+  markers); a folder-name test that misclassified the abridged-prompt runs as full-prompt runs
+  in the figure code is fixed (the published figures were unaffected because the affected
+  branch was not drawn).
+- `build_s1_table.py` outputs (`S1_Table.xlsx`, `S1_Table.docx`) regenerated; `gen_report.py`
+  and `index.html`: the same folder-name fix, and the effort-grid visual rating is shown as
+  counts of runs at each rating rather than a mean.
+- `analysis/design_markers.xlsx`, the spreadsheet form of `design_markers.csv`, is added.
+
+### Metadata
+- `CITATION.cff` and `.zenodo.json` bumped to v2.5.0.
+
 ## v2.4.0 — 2026-09-03
 
 This release **adds the analysis code and corrects the documentation.** The scoring instrument

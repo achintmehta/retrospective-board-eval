@@ -14,7 +14,7 @@ gracefully without them.
 """
 import os, glob, re, csv, statistics as st
 BASE = os.path.dirname(os.path.abspath(__file__))
-VERSION = "v2.4.0"
+VERSION = "v2.5.0"
 
 # ---- parse all rubrics ----
 runs = []

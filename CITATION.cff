@@ -6,8 +6,8 @@ type: dataset
 authors:
   - family-names: Mehta
     given-names: Achint
-version: "v2.4.0"
-date-released: "2026-09-03"
+version: "v2.5.0"
+date-released: "2026-09-11"
 license: MIT
 url: "https://github.com/achintmehta/retrospective-board-eval"
 repository-code: "https://github.com/achintmehta/retrospective-board-eval"
@@ -29,3 +29,13 @@ preferred-citation:
   year: 2026
   status: submitted
   notes: "Submitted for peer review; this entry will be updated with the volume, pages and DOI on publication."
+references:
+  - type: article
+    title: "Reasoning effort, not tool access, buys first-try reliability in agentic code generation: an observational study"
+    authors:
+      - family-names: Mehta
+        given-names: Achint
+    year: 2026
+    doi: "10.48550/arXiv.2607.02436"
+    url: "https://arxiv.org/abs/2607.02436"
+    notes: "Preprint of the accompanying paper and superseded by the PeerJ Computer Science submission."

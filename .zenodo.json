@@ -4,7 +4,7 @@
   "upload_type": "dataset",
   "access_right": "open",
   "license": "MIT",
-  "version": "v2.4.0",
+  "version": "v2.5.0",
   "creators": [
     {
       "name": "Mehta, Achint"
@@ -20,5 +20,12 @@
     "reasoning effort",
     "prompt engineering"
   ],
-  "notes": "Version history, the scoring-instrument finalization (14-criterion / 42-point rubric applied uniformly to all runs) and the corrections made to earlier release notes are documented in CHANGELOG.md. The accompanying paper has been submitted to PeerJ Computer Science; the third-party Antigravity system prompt used in the full design-prompt condition is not redistributed (it is excluded from every run folder and from the release archive), and only the abridged paraphrase written for the study is published, in analysis/abridged_design_prompt.md."
+  "related_identifiers": [
+    {
+      "identifier": "10.48550/arXiv.2607.02436",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-preprint"
+    }
+  ],
+  "notes": "Version history, the scoring-instrument finalization (14-criterion / 42-point rubric applied uniformly to all runs) and the corrections made to earlier release notes are documented in CHANGELOG.md. The accompanying paper is under consideration at PeerJ Computer Science as an AI Application article, and an earlier version is available as arXiv:2607.02436. The third-party Antigravity system prompt used in the full design-prompt condition is not redistributed (it is excluded from every run folder and from the release archive), and only the abridged paraphrase written for the study is published, in analysis/abridged_design_prompt.md."
 }
